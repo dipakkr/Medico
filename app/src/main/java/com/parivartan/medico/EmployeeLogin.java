@@ -39,7 +39,7 @@ public class EmployeeLogin extends AppCompatActivity {
         if(mAuth.getCurrentUser() !=null){
             //user is logged in
             finish();
-         //TODO ALREADY LOGIN, START MAIN ACITIVITY
+            startActivity(new Intent(this,MainActivity.class));
         }
 
         mEtemail = (EditText)findViewById(R.id.login_email);

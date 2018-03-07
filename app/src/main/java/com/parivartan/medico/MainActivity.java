@@ -14,6 +14,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.parivartan.medico.activity.MyProfile;
 import com.parivartan.medico.activity.PresentQR;
 import com.parivartan.medico.activity.TrackRecord;
@@ -73,7 +74,13 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            return true;
+
+            try {
+                FirebaseAuth.getInstance().signOut();
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+            startActivity(new Intent(this,EmployeeRegistration.class));
         }
 
         return super.onOptionsItemSelected(item);

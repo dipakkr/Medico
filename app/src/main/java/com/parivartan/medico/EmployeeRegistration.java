@@ -22,6 +22,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.parivartan.medico.activity.PreProfileUpdate;
+import com.parivartan.medico.model.PatientDetail;
 
 /**
  * Created by deepak on 07-02-2017.
@@ -45,6 +47,7 @@ public class EmployeeRegistration extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_employee_reg);
         sharedpreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
@@ -55,17 +58,13 @@ public class EmployeeRegistration extends AppCompatActivity {
         mRegister = (Button) findViewById(R.id.register);
         mLogin = (TextView) findViewById(R.id.goto_login);
 
+        mDatabase = FirebaseDatabase.getInstance().getReference("patientDetails");
 
-        mDatabase = FirebaseDatabase.getInstance().getReference("Employee");
         TextView textView = (TextView)findViewById(R.id.emp_title);
         textView.setText("Signup");
 
         progressDialog = new ProgressDialog(this);
 
-        if(mAuth.getCurrentUser()!=null){
-            finish();
-           //TODO Start MAIN ACTIVITY
-        }
 
         mRegister.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -83,8 +82,7 @@ public class EmployeeRegistration extends AppCompatActivity {
     }
     private void registerUser(){
         final String email = mEmail.getText().toString();
-        String password = mPassword.getText().toString();
-
+        final String password = mPassword.getText().toString();
 
         SharedPreferences.Editor editor = sharedpreferences.edit();
         editor.putString("email",email);
@@ -114,14 +112,12 @@ public class EmployeeRegistration extends AppCompatActivity {
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()){
 
-//                    Employee employee = new Employee(email,"","","","",
-//                            "","","","","","");
-//                    mDatabase.child(aadhaar).setValue(employee);
+                    PatientDetail patientDetail = new PatientDetail(email,"","","","");
+                    mDatabase.child(userid).setValue(patientDetail);
 
                     Toast.makeText(EmployeeRegistration.this, "Data Uploaded", Toast.LENGTH_SHORT).show();
                     finish();
-
-                    startActivity(new Intent(EmployeeRegistration.this,MainActivity.class));
+                    startActivity(new Intent(EmployeeRegistration.this,PreProfileUpdate.class));
 
             }else{
                     Toast.makeText(EmployeeRegistration.this, "Registration Error", Toast.LENGTH_SHORT).show();

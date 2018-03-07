@@ -22,6 +22,21 @@
 
         <activity android:name=".EmployeeLogin"/>
 
+        <activity android:name=".activity.PreProfileUpdate"
+            android:label="Update Your Profile"/>
+        
+        <activity android:name=".activity.PresentQR"
+            android:parentActivityName=".MainActivity"
+            android:label="Access My Reports"/>
+
+        <activity android:name=".activity.MyProfile"
+            android:parentActivityName=".MainActivity"
+            android:label="My Profile"/>
+
+        <activity android:name=".activity.TrackRecord"
+            android:parentActivityName=".MainActivity"
+            android:label="History"/>
+
         <activity android:name=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
     </application>

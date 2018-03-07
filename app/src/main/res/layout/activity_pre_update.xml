@@ -35,19 +35,6 @@
 
             </android.support.design.widget.TextInputLayout>
 
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_margin="10dp"
-                    android:text="Patient Name"
-                    android:editable="false"
-                    android:id="@+id/user_name"
-                    android:layout_height="wrap_content" />
-
-            </android.support.design.widget.TextInputLayout>
 
             </LinearLayout>
 
@@ -62,6 +49,7 @@
                 android:layout_width="match_parent"
                 android:orientation="vertical"
                 android:layout_height="wrap_content">
+
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -80,10 +68,38 @@
                     <EditText
                         android:layout_width="match_parent"
                         android:layout_margin="10dp"
-                        android:text="Age"
+                        android:hint="Patient Name"
+                        android:id="@+id/user_name"
+                        android:layout_height="wrap_content" />
+
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_margin="10dp"
+                        android:hint="Age"
                         android:inputType="number"
                         android:layout_marginTop="5dp"
                         android:id="@+id/user_age"
+                        android:layout_height="wrap_content" />
+
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_margin="10dp"
+                        android:hint="Weight"
+                        android:inputType="number"
+                        android:layout_marginTop="5dp"
+                        android:id="@+id/user_weight"
                         android:layout_height="wrap_content" />
 
                 </android.support.design.widget.TextInputLayout>
@@ -92,7 +108,12 @@
 
         </android.support.v7.widget.CardView>
 
-
+        <Button
+            android:layout_width="match_parent"
+            android:id="@+id/update_patient"
+            android:text="Update Profile"
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp"/>
     </LinearLayout>
 
 </ScrollView>

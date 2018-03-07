@@ -16,7 +16,10 @@
         android:textColor="#896335"
         android:textSize="20sp"
         android:id="@+id/emp_title"
-        android:gravity="center_horizontal"/>
+        android:gravity="center_horizontal"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="29dp" />
 
 
     <TextView
@@ -37,8 +40,8 @@
         android:fitsSystemWindows="true"
         android:layout_height="wrap_content"
         android:id="@+id/linearLayout"
-        android:layout_marginTop="14dp"
-        android:layout_alignParentLeft="true"
+        android:layout_marginTop="60dp"
+        android:layout_below="@+id/emp_title"
         android:layout_alignParentStart="true">
 
 
