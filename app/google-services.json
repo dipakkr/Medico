@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "178976606134",
+    "firebase_url": "https://medico-7b55a.firebaseio.com",
+    "project_id": "medico-7b55a",
+    "storage_bucket": "medico-7b55a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:178976606134:android:f5c9c5e4ae4470cb",
+        "android_client_info": {
+          "package_name": "com.parivartan.medico"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "178976606134-4haln3vq0tsrj9s4rh8lvgfhlpphbmov.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.parivartan.medico",
+            "certificate_hash": "ea330d9318aba61e1a499cb54c1a030b2b965c7b"
+          }
+        },
+        {
+          "client_id": "178976606134-iouipn46nc59qqpvpk4oaql046fdhiks.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDawp9QNbkRrvmv2ozEGdaNJke-jJDujsw"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "178976606134-iouipn46nc59qqpvpk4oaql046fdhiks.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
