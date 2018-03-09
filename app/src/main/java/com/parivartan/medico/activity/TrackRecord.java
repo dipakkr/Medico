@@ -85,7 +85,7 @@ public class TrackRecord extends AppCompatActivity {
     }
 
     private void saveUserDetails() {
-        PatientHistory patientHistory = new PatientHistory(username, allergens, resistance,
+        /*PatientHistory patientHistory = new PatientHistory(username, allergens, resistance,
                                             pregnancy, diabetes, highbloodPressure, highCholestrol, others, geneticDisesase);
 
         Gson gson = new Gson();
@@ -106,7 +106,7 @@ public class TrackRecord extends AppCompatActivity {
             }
         }finally {
 
-        }
+        }*/
     }
 
 
