@@ -2,8 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Medico.iml" filepath="$PROJECT_DIR$/Medico.iml" />
+      <module fileurl="file://E:\final hack\medico\Medico.iml" filepath="E:\final hack\medico\Medico.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://E:\final hack\medico\app\app.iml" filepath="E:\final hack\medico\app\app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/medico.iml" filepath="$PROJECT_DIR$/medico.iml" />
     </modules>
   </component>
 </project>

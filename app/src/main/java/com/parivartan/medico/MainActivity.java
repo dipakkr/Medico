@@ -131,7 +131,7 @@ public class MainActivity extends AppCompatActivity
 //        params.add(new BasicNameValuePair("firstParam", paramValue1));
 //        params.add(new BasicNameValuePair("secondParam", paramValue2));
 //        params.add(new BasicNameValuePair("thirdParam", paramValue3));
-    git
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
