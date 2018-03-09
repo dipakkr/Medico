@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.telecom.Call;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -22,11 +23,15 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.parivartan.medico.activity.MyProfile;
+import com.parivartan.medico.activity.PreProfileUpdate;
 import com.parivartan.medico.activity.PresentQR;
 import com.parivartan.medico.activity.TrackRecord;
 import com.parivartan.medico.adapter.MedicineAdapter;
 import com.parivartan.medico.model.Medicine;
 import com.parivartan.medico.model.PatientDetail;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -39,12 +44,23 @@ import java.util.List;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private int count = 2;
     private String TAG = "MainActivity.class";
     MedicineAdapter medicineAdapter;
+
+    public static final MediaType MEDIA_TYPE =
+            MediaType.parse("application/json");
+
 
     FirebaseAuth mAuth;
 
@@ -58,9 +74,11 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        final OkHttpClient client = new OkHttpClient();
+
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        email = preferences.getString("email","");
-        username = preferences.getString("username","");
+        email = preferences.getString("email", "");
+        username = preferences.getString("username", "");
 
 
 //        Intent intent = getIntent();
@@ -69,13 +87,11 @@ public class MainActivity extends AppCompatActivity
 
         Toast.makeText(this, email, Toast.LENGTH_SHORT).show();
         Toast.makeText(this, username, Toast.LENGTH_SHORT).show();
-//
-//        makePostRequest();
 
         mAuth = FirebaseAuth.getInstance();
 
-        if(mAuth.getCurrentUser() == null){
-            startActivity(new Intent(this,EmployeeRegistration.class));
+        if (mAuth.getCurrentUser() == null) {
+            startActivity(new Intent(this, EmployeeRegistration.class));
         }
 
 
@@ -98,40 +114,53 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         List<Medicine> medicines = new ArrayList<>();
-        ListView listView = (ListView)findViewById(R.id.list_view);
-        medicineAdapter = new MedicineAdapter(getApplicationContext(),R.layout.list_medicine,medicines);
+        ListView listView = (ListView) findViewById(R.id.list_view);
+        medicineAdapter = new MedicineAdapter(getApplicationContext(), R.layout.list_medicine, medicines);
         listView.setAdapter(medicineAdapter);
 
+        JSONObject postdata = new JSONObject();
+
+        try {
+            postdata.put("User_Name", username);
+            postdata.put("email", email);
+        } catch(JSONException e){
+            e.printStackTrace();
+        }
+
+        RequestBody body = RequestBody.create(MEDIA_TYPE,
+                postdata.toString());
+
+        final Request request = new Request.Builder()
+                .url("https://api.illiteracy22.hasura-app.io/User_Personal_Details/upload_user_details")
+                .post(body)
+                .addHeader("Content-Type", "application/json")
+                .addHeader("cache-control", "no-cache")
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(okhttp3.Call call, IOException e) {
+                String mMessage = e.getMessage().toString();
+                Log.w("failure Response", mMessage);
+                //call.cancel();
+            }
+
+            @Override
+            public void onResponse(okhttp3.Call call, Response response) throws IOException {
+
+                String mMessage = response.body().string();
+                if (response.isSuccessful()){
+                    try {
+                        JSONObject json = new JSONObject(mMessage);
+                        Log.e("JSON",json.toString());
+                    } catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+
     }
-
-//    private void makePostRequest(){
-//        URL url = null;
-//        try {
-//
-//            url = new URL("https://api.illiteracy22.hasura-app.io/User_Personal_Details/upload_user_details");
-//        }catch (MalformedURLException e){
-//            e.printStackTrace();
-//        }
-//
-//        try {
-//
-//            HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
-//            conn.setReadTimeout(10000);
-//            conn.setConnectTimeout(15000);
-//            conn.setRequestMethod("POST");
-//            conn.setDoInput(true);
-//            conn.setDoOutput(true);
-//            conn.connect();
-//
-//        }catch (IOException e){
-//            e.printStackTrace();
-//        }
-
-//        List<NameValuePair> params = new ArrayList<NameValuePair>();
-//        params.add(new BasicNameValuePair("firstParam", paramValue1));
-//        params.add(new BasicNameValuePair("secondParam", paramValue2));
-//        params.add(new BasicNameValuePair("thirdParam", paramValue3));
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -171,6 +200,10 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_history) {
 
             startActivity(new Intent(this, TrackRecord.class));
+
+        } else if (id == R.id.nav_pre_update) {
+
+            startActivity(new Intent(this, PreProfileUpdate.class));
 
         } else if (id == R.id.nav_reports) {
 

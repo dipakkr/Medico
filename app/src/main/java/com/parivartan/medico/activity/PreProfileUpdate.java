@@ -1,8 +1,11 @@
 package com.parivartan.medico.activity;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -18,6 +21,8 @@ public class PreProfileUpdate extends AppCompatActivity {
 
     EditText email, name, age, weight, gender,height, username;
 
+    String mEmail, mUsername;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,6 +36,13 @@ public class PreProfileUpdate extends AppCompatActivity {
         gender = (EditText)findViewById(R.id.user_gender);
         height = (EditText)findViewById(R.id.user_height);
 
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        mEmail = preferences.getString("email", "");
+        mUsername = preferences.getString("username", "");
+
+        Log.e("EMAIL",mEmail);
+        username.setText(mUsername);
+        email.setText(mEmail);
     }
 
     @Override
