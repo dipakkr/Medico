@@ -23,6 +23,13 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.parivartan.medico.model.PatientDetail;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import okhttp3.MediaType;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+
 
 /**
  * Created by deepak on 07-02-2017.
@@ -41,6 +48,11 @@ public class EmployeeRegistration extends AppCompatActivity {
     private EditText mName;
     private ProgressDialog progressDialog;
     SharedPreferences sharedpreferences;
+
+
+    public static final MediaType MEDIA_TYPE =
+            MediaType.parse("application/json");
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -108,7 +120,25 @@ public class EmployeeRegistration extends AppCompatActivity {
                 if(task.isSuccessful()){
 
 
-                    PatientDetail patientDetail = new PatientDetail(email,"","","","","","","","","","","");
+                    JSONObject postdata = new JSONObject();
+
+                    try {
+                        postdata.put("User_Name", userid);
+                        postdata.put("email", email);
+                    } catch(JSONException e){
+                        e.printStackTrace();
+                    }
+
+                    RequestBody body = RequestBody.create(MEDIA_TYPE,
+                            postdata.toString());
+
+                    final Request request = new Request.Builder()
+                            .url("https://api.illiteracy22.hasura-app.io/User_Personal_Details/upload_user_details")
+                            .post(body)
+                            .addHeader("Content-Type", "application/json")
+                            .addHeader("cache-control", "no-cache")
+                            .build();
+
 
                     Toast.makeText(EmployeeRegistration.this, "Data Uploaded", Toast.LENGTH_SHORT).show();
                     finish();

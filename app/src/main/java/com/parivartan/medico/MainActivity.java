@@ -118,47 +118,29 @@ public class MainActivity extends AppCompatActivity
         medicineAdapter = new MedicineAdapter(getApplicationContext(), R.layout.list_medicine, medicines);
         listView.setAdapter(medicineAdapter);
 
-        JSONObject postdata = new JSONObject();
 
-        try {
-            postdata.put("User_Name", username);
-            postdata.put("email", email);
-        } catch(JSONException e){
-            e.printStackTrace();
-        }
-
-        RequestBody body = RequestBody.create(MEDIA_TYPE,
-                postdata.toString());
-
-        final Request request = new Request.Builder()
-                .url("https://api.illiteracy22.hasura-app.io/User_Personal_Details/upload_user_details")
-                .post(body)
-                .addHeader("Content-Type", "application/json")
-                .addHeader("cache-control", "no-cache")
-                .build();
-
-        client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(okhttp3.Call call, IOException e) {
-                String mMessage = e.getMessage().toString();
-                Log.w("failure Response", mMessage);
-                //call.cancel();
-            }
-
-            @Override
-            public void onResponse(okhttp3.Call call, Response response) throws IOException {
-
-                String mMessage = response.body().string();
-                if (response.isSuccessful()){
-                    try {
-                        JSONObject json = new JSONObject(mMessage);
-                        Log.e("JSON",json.toString());
-                    } catch (Exception e){
-                        e.printStackTrace();
-                    }
-                }
-            }
-        });
+//        client.newCall(request).enqueue(new Callback() {
+//            @Override
+//            public void onFailure(okhttp3.Call call, IOException e) {
+//                String mMessage = e.getMessage().toString();
+//                Log.w("failure Response", mMessage);
+//                //call.cancel();
+//            }
+//
+//            @Override
+//            public void onResponse(okhttp3.Call call, Response response) throws IOException {
+//
+//                String mMessage = response.body().string();
+//                if (response.isSuccessful()){
+//                    try {
+//                        JSONObject json = new JSONObject(mMessage);
+//                        Log.e("JSON",json.toString());
+//                    } catch (Exception e){
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }
+//        });
 
     }
 
