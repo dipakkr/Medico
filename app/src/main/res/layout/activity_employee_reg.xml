@@ -3,7 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:padding="@dimen/padding_login"
     android:background="#fff"
     android:fitsSystemWindows="true"
     android:layout_height="match_parent">
@@ -17,21 +16,10 @@
         android:textSize="20sp"
         android:id="@+id/emp_title"
         android:gravity="center_horizontal"
+        android:layout_marginTop="40dp"
         android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="29dp" />
+        android:layout_alignStart="@+id/register" />
 
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:textColor="@color/colorAccent"
-        android:id="@+id/goto_login"
-        android:textSize="20sp"
-        android:text="@string/already_reg"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
 
 
     <LinearLayout
@@ -40,9 +28,10 @@
         android:fitsSystemWindows="true"
         android:layout_height="wrap_content"
         android:id="@+id/linearLayout"
-        android:layout_marginTop="60dp"
+        android:padding="20dp"
+        android:layout_marginTop="73dp"
         android:layout_below="@+id/emp_title"
-        android:layout_alignParentStart="true">
+        android:layout_alignStart="@+id/emp_title">
 
 
 
@@ -78,15 +67,27 @@
 
         </android.support.design.widget.TextInputLayout>
 
-        <Button
-            android:layout_width="match_parent"
+
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="@dimen/activity_horizontal_margin"
-            android:textSize="24sp"
-            android:id="@+id/register"
-            android:text="@string/register"/>
+            android:textColor="@color/colorAccent"
+            android:id="@+id/goto_login"
+            android:textSize="14sp"
+            android:text="@string/already_reg"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true" />
 
     </LinearLayout>
 
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:textSize="24sp"
+        android:id="@+id/register"
+        android:text="SIGN UP"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true" />
 </RelativeLayout>

@@ -3,6 +3,7 @@ package com.parivartan.medico;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -20,10 +21,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.parivartan.medico.activity.PreProfileUpdate;
 import com.parivartan.medico.model.PatientDetail;
+
 
 /**
  * Created by deepak on 07-02-2017.
@@ -41,7 +40,6 @@ public class EmployeeRegistration extends AppCompatActivity {
     private Button mRegister;
     private EditText mName;
     private ProgressDialog progressDialog;
-    private DatabaseReference mDatabase;
     SharedPreferences sharedpreferences;
 
     @Override
@@ -58,14 +56,10 @@ public class EmployeeRegistration extends AppCompatActivity {
         mRegister = (Button) findViewById(R.id.register);
         mLogin = (TextView) findViewById(R.id.goto_login);
 
-        mDatabase = FirebaseDatabase.getInstance().getReference("patientDetails");
 
         TextView textView = (TextView)findViewById(R.id.emp_title);
         textView.setText("Signup");
-
         progressDialog = new ProgressDialog(this);
-
-
         mRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -83,15 +77,16 @@ public class EmployeeRegistration extends AppCompatActivity {
     private void registerUser(){
         final String email = mEmail.getText().toString();
         final String password = mPassword.getText().toString();
+        final String userid = email.split("@")[0];
 
         SharedPreferences.Editor editor = sharedpreferences.edit();
         editor.putString("email",email);
         editor.putString("password",password);
+        editor.putString("username",userid);
         editor.apply();
-        final String userid = email.split("@")[0];
 
-        Log.e("email","");
-        Log.e("password","");
+        Log.e("email",email);
+        Log.e("password",password);
         Log.e("Username ", userid);
 
         if(TextUtils.isEmpty(email)){
@@ -112,12 +107,17 @@ public class EmployeeRegistration extends AppCompatActivity {
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()){
 
-                    PatientDetail patientDetail = new PatientDetail(email,"","","","");
-                    mDatabase.child(userid).setValue(patientDetail);
+
+                    PatientDetail patientDetail = new PatientDetail(email,"","","","","","","","","","","");
 
                     Toast.makeText(EmployeeRegistration.this, "Data Uploaded", Toast.LENGTH_SHORT).show();
                     finish();
-                    startActivity(new Intent(EmployeeRegistration.this,PreProfileUpdate.class));
+
+                    Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+                    intent.putExtra("email",email);
+                    intent.putExtra("username",userid);
+                    startActivity(intent);
+
 
             }else{
                     Toast.makeText(EmployeeRegistration.this, "Registration Error", Toast.LENGTH_SHORT).show();
