@@ -48,8 +48,8 @@ public class MainActivity extends AppCompatActivity
 
     FirebaseAuth mAuth;
 
-    String email;
-    String username;
+    public static String email;
+    public static String username;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
