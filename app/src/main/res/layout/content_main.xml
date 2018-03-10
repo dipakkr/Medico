@@ -25,13 +25,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Medicine Recommendation"
+                android:textStyle="bold"
                 android:padding="10dp"
                 android:textSize="15sp"
                 android:gravity="center"/>
 
             <Spinner
                 android:layout_width="match_parent"
-                android:padding="10dp"
+                android:padding="5dp"
                 android:id="@+id/spinner_types"
                 android:layout_height="wrap_content">
 
@@ -39,16 +40,25 @@
 
             <EditText
                 android:layout_width="match_parent"
-                android:hint="Search Medicine "
+                android:hint="Medicine Name"
                 android:layout_weight="2"
                 android:layout_margin="10dp"
                 android:gravity="center_horizontal"
-                android:id="@+id/search_medicine"
+                android:id="@+id/et_medicine_name"
                 android:layout_height="wrap_content" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Dosage"
+                android:gravity="center_horizontal"
+                android:id="@+id/et_dosage"/>
+
 
             <Button
                 android:layout_width="wrap_content"
-                android:text="Search"
+                android:text="Analyse"
+                android:id="@+id/bt_analyse"
                 android:layout_gravity="center_horizontal"
                 android:layout_height="wrap_content" />
 

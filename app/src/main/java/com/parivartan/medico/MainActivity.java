@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.telecom.Call;
@@ -20,10 +21,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.parivartan.medico.activity.MyProfile;
 import com.parivartan.medico.activity.PreProfileUpdate;
@@ -71,6 +77,18 @@ public class MainActivity extends AppCompatActivity
     public static String username;
 
     Spinner spinner_type;
+
+    EditText et_medicine_name;
+    EditText et_medicine_dosage;
+
+    String med_name;
+    String med_dosage;
+    String med_type;
+    String type;
+
+    JSONObject postdata;
+
+    Button bt_analyse;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,32 +141,70 @@ public class MainActivity extends AppCompatActivity
         medicineAdapter = new MedicineAdapter(getApplicationContext(), R.layout.list_medicine, medicines);
         listView.setAdapter(medicineAdapter);
 
-        spinner_type = (Spinner)findViewById(R.id.spinner_types);
+        spinner_type = (Spinner) findViewById(R.id.spinner_types);
         setupSpinner();
 
-//        client.newCall(request).enqueue(new Callback() {
-//            @Override
-//            public void onFailure(okhttp3.Call call, IOException e) {
-//                String mMessage = e.getMessage().toString();
-//                Log.w("failure Response", mMessage);
-//                //call.cancel();
-//            }
-//
-//            @Override
-//            public void onResponse(okhttp3.Call call, Response response) throws IOException {
-//
-//                String mMessage = response.body().string();
-//                if (response.isSuccessful()){
-//                    try {
-//                        JSONObject json = new JSONObject(mMessage);
-//                        Log.e("JSON",json.toString());
-//                    } catch (Exception e){
-//                        e.printStackTrace();
-//                    }
-//                }
-//            }
-//        });
+        //EditText id reference
+        et_medicine_name = (EditText)findViewById(R.id.et_medicine_name);
+        et_medicine_dosage = (EditText)findViewById(R.id.et_dosage);
+        bt_analyse = (Button)findViewById(R.id.bt_analyse);
 
+        postdata = new JSONObject();
+
+        bt_analyse.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                med_name = et_medicine_name.getText().toString();
+                med_dosage = et_medicine_dosage.getText().toString();
+
+                postdata = new JSONObject();
+
+                    try {
+                        postdata.put("Type", med_type);
+                        postdata.put("User_Name", username);
+                        postdata.put("Medicine_Name", med_name);
+                        postdata.put("Dosage", med_dosage);
+                    } catch(JSONException e){
+                        e.printStackTrace();
+                    }
+
+                    RequestBody body = RequestBody.create(MEDIA_TYPE,
+                            postdata.toString());
+
+                    final Request request = new Request.Builder()
+                            .url("https://api.illiteracy22.hasura-app.io/ML_Analysis/Evaluation")
+                            .post(body)
+                            .addHeader("Content-Type", "application/json")
+                            .addHeader("cache-control", "no-cache")
+                            .addHeader("status","200")
+                            .build();
+
+
+                    client.newCall(request).enqueue(new Callback() {
+                        @Override
+                        public void onFailure(okhttp3.Call call, IOException e) {
+                            String mMessage = e.getMessage().toString();
+                            Log.w("failure Response", mMessage);
+                            //call.cancel();
+                        }
+
+                        @Override
+                        public void onResponse(okhttp3.Call call, Response response) throws IOException {
+
+                            String mMessage = response.body().string();
+                            if (response.isSuccessful()){
+                                try {
+                                    JSONObject json = new JSONObject(mMessage);
+                                    Log.e("JSON",json.toString());
+                                } catch (Exception e){
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    });
+               }
+        });
     }
 
     @Override
@@ -239,13 +295,38 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
 
-//                key = (String)adapterView.getItemAtPosition(i);
-//                if(key.equals(getString(R.string.sort_city))){
-//                    key = "city";
-//                }else if(key.equals(getString(R.string.sort_skill))){
-//                    key = "req_skill1";
-//
-//                }
+                med_type = (String)adapterView.getItemAtPosition(i);
+                if(med_type.equals("Alimentary_System")){
+                    med_type = "1";
+                } else if(med_type.equals("Antibiotics")){
+                    med_type = "2";
+                } else if(med_type.equals("Cardiovascular_System")){
+                    med_type = "3";
+                } else if(med_type.equals("Central_Nervous_System")){
+                    med_type = "4";
+                } else if(med_type.equals("Eye")){
+                    med_type = "5";
+                } else if(med_type.equals("Genito-Urinary_Tract")){
+                    med_type = "6";
+                } else if(med_type.equals("Hormones")){
+                    med_type = "7";
+                } else if(med_type.equals("Metabolism")){
+                    med_type = "8";
+                } else if(med_type.equals("Musculo-Skeletal_Disorder")){
+                    med_type = "9";
+                } else if(med_type.equals("Nutrition")){
+                    med_type = "10";
+                } else if(med_type.equals("Oropharyngeal")){
+                    med_type = "11";
+                } else if(med_type.equals("Respiratory_System_and_Anti-Allergics")){
+                    med_type = "12";
+                } else if(med_type.equals("Skin")){
+                    med_type = "13";
+                } else if(med_type.equals("Surgical_and_Vaccines")){
+                    med_type = "14";
+                }
+
+                Log.e("TYPE",med_type);
 
             }
             @Override
