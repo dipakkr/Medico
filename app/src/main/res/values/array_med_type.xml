@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="array_med_types">
+       <item>Alimentary_System</item>
+        <item>Antibiotics</item>
+        <item>Cardiovascular_System</item>
+        <item>Central_Nervous_System</item>
+        <item>Eye</item>
+        <item>Genito-Urinary_Tract</item>
+        <item>Hormones</item>
+        <item>Metabolism</item>
+        <item>Musculo-Skeletal_Disorder</item>
+        <item>Nutrition</item>
+        <item>Oropharyngeal</item>
+        <item>Respiratory_System_and_Anti-Allergics</item>
+        <item>Skin</item>
+        <item>Surgical_and_Vaccines</item>
+    </string-array>
+</resources>
+
+
+
+    <!--0-"null"-->
+    <!--1-"Alimentary_System"-->
+    <!--2-"Antibiotics"-->
+    <!--3-"Cardiovascular_System"-->
+    <!--4-"Central_Nervous_System"-->
+    <!--5-"Eye"-->
+    <!--6-"Genito-Urinary_Tract"-->
+    <!--7-"Hormones"-->
+    <!--8-"Metabolism"-->
+    <!--9-"Musculo-Skeletal_Disorder"-->
+    <!--10-"Nutrition"-->
+    <!--11-"Oropharyngeal"-->
+    <!--12-"Respiratory_System_and_Anti-Allergics"-->
+    <!--13-"Skin"-->
+    <!--14-"Surgical_and_Vaccines"-->

@@ -18,7 +18,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -66,6 +69,8 @@ public class MainActivity extends AppCompatActivity
 
     public static String email;
     public static String username;
+
+    Spinner spinner_type;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,6 +123,8 @@ public class MainActivity extends AppCompatActivity
         medicineAdapter = new MedicineAdapter(getApplicationContext(), R.layout.list_medicine, medicines);
         listView.setAdapter(medicineAdapter);
 
+        spinner_type = (Spinner)findViewById(R.id.spinner_types);
+        setupSpinner();
 
 //        client.newCall(request).enqueue(new Callback() {
 //            @Override
@@ -221,5 +228,30 @@ public class MainActivity extends AppCompatActivity
     protected void onPause() {
         super.onPause();
         count = 2;
+    }
+
+    private void setupSpinner(){
+        ArrayAdapter adapter = ArrayAdapter.createFromResource(getApplicationContext(),R.array.array_med_types,
+                R.layout.spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+        spinner_type.setAdapter(adapter);
+        spinner_type.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+
+//                key = (String)adapterView.getItemAtPosition(i);
+//                if(key.equals(getString(R.string.sort_city))){
+//                    key = "city";
+//                }else if(key.equals(getString(R.string.sort_skill))){
+//                    key = "req_skill1";
+//
+//                }
+
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+            }
+
+        });
     }
 }

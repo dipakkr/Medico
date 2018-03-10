@@ -26,9 +26,14 @@ import com.parivartan.medico.model.PatientDetail;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+
+import okhttp3.Callback;
 import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
+import okhttp3.Response;
 
 
 /**
@@ -53,6 +58,10 @@ public class EmployeeRegistration extends AppCompatActivity {
     public static final MediaType MEDIA_TYPE =
             MediaType.parse("application/json");
 
+    OkHttpClient client;
+
+    JSONObject postdata;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -60,6 +69,8 @@ public class EmployeeRegistration extends AppCompatActivity {
 
         setContentView(R.layout.activity_employee_reg);
         sharedpreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+
+        client = new OkHttpClient();
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -113,15 +124,14 @@ public class EmployeeRegistration extends AppCompatActivity {
         progressDialog.setMessage("Registering Please Wait");
         progressDialog.show();
 
+        postdata = new JSONObject();
+
         mAuth.createUserWithEmailAndPassword(email,password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()){
-
-
-                    JSONObject postdata = new JSONObject();
-
+                    g
                     try {
                         postdata.put("User_Name", userid);
                         postdata.put("email", email);
@@ -138,6 +148,31 @@ public class EmployeeRegistration extends AppCompatActivity {
                             .addHeader("Content-Type", "application/json")
                             .addHeader("cache-control", "no-cache")
                             .build();
+
+
+                    client.newCall(request).enqueue(new Callback() {
+                        @Override
+                        public void onFailure(okhttp3.Call call, IOException e) {
+                            String mMessage = e.getMessage().toString();
+                            Log.w("failure Response", mMessage);
+                            //call.cancel();
+                        }
+
+                        @Override
+                        public void onResponse(okhttp3.Call call, Response response) throws IOException {
+
+                            String mMessage = response.body().string();
+                            if (response.isSuccessful()){
+                                try {
+                                    JSONObject json = new JSONObject(mMessage);
+                                    Log.e("JSON",json.toString());
+                                } catch (Exception e){
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    });
+
 
 
                     Toast.makeText(EmployeeRegistration.this, "Data Uploaded", Toast.LENGTH_SHORT).show();
