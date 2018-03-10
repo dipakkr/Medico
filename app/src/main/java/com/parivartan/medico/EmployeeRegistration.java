@@ -131,7 +131,6 @@ public class EmployeeRegistration extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()){
-                    g
                     try {
                         postdata.put("User_Name", userid);
                         postdata.put("email", email);

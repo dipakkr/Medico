@@ -2,9 +2,13 @@ package com.parivartan.medico.activity;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -12,18 +16,49 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.gson.Gson;
+import com.parivartan.medico.EmployeeRegistration;
 import com.parivartan.medico.MainActivity;
 import com.parivartan.medico.R;
 import com.parivartan.medico.model.PatientHistory;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import javax.net.ssl.HttpsURLConnection;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 /**
  * Created by root on 3/7/18.
@@ -32,16 +67,8 @@ import java.util.List;
 public class TrackRecord extends AppCompatActivity {
 
     public static final String LOG_TAG = TrackRecord.class.getName();
-
-    private EditText mAllergens;
-    private EditText mResistance;
-    private CheckBox mPregnancy;
-    private CheckBox mDiabetes;
-    private CheckBox mHighBloodPressure;
-    private CheckBox mHighCholestrol;
-    private EditText mOther;
-    private EditText mGeneticDiseaseEditText;
-
+    public static final MediaType MEDIA_TYPE =
+            MediaType.parse("application/json");
     String username;
     List<String> allergens;
     List<String> resistance;
@@ -51,6 +78,17 @@ public class TrackRecord extends AppCompatActivity {
     boolean highCholestrol;
     List<String> others;
     List<String> geneticDisesase;
+    OkHttpClient client;
+    JSONObject postdata;
+    private EditText mAllergens;
+    private EditText mResistance;
+    private CheckBox mPregnancy;
+    private CheckBox mDiabetes;
+    private CheckBox mHighBloodPressure;
+    private CheckBox mHighCholestrol;
+    private EditText mOther;
+    private EditText mGeneticDiseaseEditText;
+    private String json;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -60,16 +98,17 @@ public class TrackRecord extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
+        client = new OkHttpClient();
+
         mAllergens = (EditText) findViewById(R.id.allergens_edit_text);
         mResistance = (EditText) findViewById(R.id.resistance_edit_text);
         mPregnancy = (CheckBox) findViewById(R.id.pregnancy_checkbox);
-        mDiabetes =  (CheckBox) findViewById(R.id.diabetes_checkbox);
-        mHighBloodPressure =  (CheckBox) findViewById(R.id.highBloodPressure_checkbox);
-        mHighCholestrol =  (CheckBox) findViewById(R.id.highCholesterol_checkbox);
+        mDiabetes = (CheckBox) findViewById(R.id.diabetes_checkbox);
+        mHighBloodPressure = (CheckBox) findViewById(R.id.highBloodPressure_checkbox);
+        mHighCholestrol = (CheckBox) findViewById(R.id.highCholesterol_checkbox);
         mOther = (EditText) findViewById(R.id.other_edit_text);
         mGeneticDiseaseEditText = (EditText) findViewById(R.id.genetic_edit_text);
 
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         username = MainActivity.username;
     }
 
@@ -85,30 +124,59 @@ public class TrackRecord extends AppCompatActivity {
     }
 
     private void saveUserDetails() {
-        /*PatientHistory patientHistory = new PatientHistory(username, allergens, resistance,
-                                            pregnancy, diabetes, highbloodPressure, highCholestrol, others, geneticDisesase);
 
-        Gson gson = new Gson();
-        String json = gson.toJson(patientHistory);
+        postdata = new JSONObject();
 
-        URL url;
-        HttpURLConnection client = null;
         try {
-            url = new URL("https://api.illiteracy22.hasura-app.io/User_History_Upload/upload_user_history");
-        } catch (MalformedURLException e) {
-            Log.e(LOG_TAG, "Problem building the URL ", e);
+            postdata.put("User_Name", username);
+            postdata.put("Allergens", allergens);
+            postdata.put("Resistance", resistance);
+            postdata.put("Pregnancy", pregnancy);
+            postdata.put("diabetes", diabetes);
+            postdata.put("highBloodPressure", highbloodPressure);
+            postdata.put("highCholesterol", highbloodPressure);
+            postdata.put("other", others);
+            postdata.put("geneticDisease", geneticDisesase);
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
-        try {
-            try {
-                client = (HttpURLConnection) url.openConnection();
-            } catch (IOException e) {
-                e.printStackTrace();
+
+        RequestBody body = RequestBody.create(MEDIA_TYPE,
+                postdata.toString());
+
+        final Request request = new Request.Builder()
+                .url("https://api.illiteracy22.hasura-app.io/User_History_Upload/upload_user_history")
+                .post(body)
+                .addHeader("Content-Type", "application/json")
+                .addHeader("cache-control", "no-cache")
+                .build();
+
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(okhttp3.Call call, IOException e) {
+                String mMessage = e.getMessage().toString();
+                Log.w("failure Response", mMessage);
+                //call.cancel();
             }
-        }finally {
 
-        }*/
+            @Override
+            public void onResponse(okhttp3.Call call, Response response) throws IOException {
+
+                String mMessage = response.body().string();
+                if (response.isSuccessful()) {
+                    try {
+                        JSONObject json = new JSONObject(mMessage);
+                        Log.e("JSON", json.toString());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+
+        Toast.makeText(TrackRecord.this, "Data Uploaded", Toast.LENGTH_SHORT).show();
     }
-
 
     private void showUnsavedChangesDialog(
             DialogInterface.OnClickListener saveButtonClickListener) {
