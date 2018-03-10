@@ -25,6 +25,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -70,14 +71,12 @@ public class MainActivity extends AppCompatActivity
     public static final MediaType MEDIA_TYPE =
             MediaType.parse("application/json");
 
-
     FirebaseAuth mAuth;
 
     public static String email;
     public static String username;
 
     Spinner spinner_type;
-
     EditText et_medicine_name;
     EditText et_medicine_dosage;
 
@@ -87,8 +86,11 @@ public class MainActivity extends AppCompatActivity
     String type;
 
     JSONObject postdata;
-
     Button bt_analyse;
+
+    //Percentage TextViews
+    TextView mAllergy, mPreg, mAge, mDisease, mDosage, mResistance, mOverall;
+    String allergy,  disease,pregnancy,resistance, age, dosage, overall;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -136,10 +138,6 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        List<Medicine> medicines = new ArrayList<>();
-        ListView listView = (ListView) findViewById(R.id.list_view);
-        medicineAdapter = new MedicineAdapter(getApplicationContext(), R.layout.list_medicine, medicines);
-        listView.setAdapter(medicineAdapter);
 
         spinner_type = (Spinner) findViewById(R.id.spinner_types);
         setupSpinner();
@@ -148,6 +146,15 @@ public class MainActivity extends AppCompatActivity
         et_medicine_name = (EditText)findViewById(R.id.et_medicine_name);
         et_medicine_dosage = (EditText)findViewById(R.id.et_dosage);
         bt_analyse = (Button)findViewById(R.id.bt_analyse);
+
+        //Text view ids
+        mDosage = (TextView)findViewById(R.id.dosage_percentage);
+        mAge = (TextView)findViewById(R.id.age_percentage);
+        mPreg = (TextView)findViewById(R.id.pregnancy_percentage);
+        mResistance = (TextView)findViewById(R.id.resistance_percentage);
+        mAllergy = (TextView)findViewById(R.id.allergy_percentage);
+        mDisease = (TextView)findViewById(R.id.Disease_condition_percentage);
+        mOverall = (TextView)findViewById(R.id.overall_percentage);
 
         postdata = new JSONObject();
 
@@ -159,7 +166,6 @@ public class MainActivity extends AppCompatActivity
                 med_dosage = et_medicine_dosage.getText().toString();
 
                 postdata = new JSONObject();
-
                     try {
                         postdata.put("Type", med_type);
                         postdata.put("User_Name", username);
@@ -168,10 +174,8 @@ public class MainActivity extends AppCompatActivity
                     } catch(JSONException e){
                         e.printStackTrace();
                     }
-
                     RequestBody body = RequestBody.create(MEDIA_TYPE,
                             postdata.toString());
-
                     final Request request = new Request.Builder()
                             .url("https://api.illiteracy22.hasura-app.io/ML_Analysis/Evaluation")
                             .post(body)
@@ -180,7 +184,6 @@ public class MainActivity extends AppCompatActivity
                             .addHeader("status","200")
                             .build();
 
-
                     client.newCall(request).enqueue(new Callback() {
                         @Override
                         public void onFailure(okhttp3.Call call, IOException e) {
@@ -188,23 +191,41 @@ public class MainActivity extends AppCompatActivity
                             Log.w("failure Response", mMessage);
                             //call.cancel();
                         }
-
                         @Override
                         public void onResponse(okhttp3.Call call, Response response) throws IOException {
-
                             String mMessage = response.body().string();
                             if (response.isSuccessful()){
                                 try {
                                     JSONObject json = new JSONObject(mMessage);
-                                    Log.e("JSON",json.toString());
+                                     allergy = json.getString("allergy_percentage");
+                                     disease = json.getString("Disease_condition_percentage");
+                                     pregnancy = json.getString("Pregnancy_percentage");
+                                     resistance = json.getString("Resistance_percentage");
+                                     age = json.getString("age_percentage");
+                                     dosage = json.getString("dosage_percentage");
+                                     overall = json.getString("aggerage_percentage");
+
+                                    Log.e("Values",allergy + disease + pregnancy + resistance + age + dosage + overall);
                                 } catch (Exception e){
                                     e.printStackTrace();
                                 }
                             }
                         }
                     });
+                updateUi();
                }
         });
+    }
+
+    private void updateUi(){
+
+        mAllergy.setText(allergy);
+        mDisease.setText(disease);
+        mPreg.setText(pregnancy);
+        mResistance.setText(resistance);
+        mAge.setText(age);
+        mDosage.setText(dosage);
+        mOverall.setText("Overall Percentage - " + overall);
     }
 
     @Override
@@ -220,7 +241,6 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.action_settings) {
-
             try {
                 FirebaseAuth.getInstance().signOut();
             } catch (Exception e){
@@ -230,6 +250,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         return super.onOptionsItemSelected(item);
+
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
