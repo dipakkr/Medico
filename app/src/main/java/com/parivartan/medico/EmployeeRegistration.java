@@ -21,7 +21,11 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
+import com.parivartan.medico.activity.FirebaseVariables;
+import com.parivartan.medico.activity.PreProfileUpdate;
 import com.parivartan.medico.model.PatientDetail;
+import com.parivartan.medico.model.UserFills;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -41,9 +45,6 @@ import okhttp3.Response;
  */
 
 public class EmployeeRegistration extends AppCompatActivity {
-
-    //Firebase Variables
-    private FirebaseAuth mAuth;
 
     public EditText mEmail;
     private EditText mPassword;
@@ -66,13 +67,18 @@ public class EmployeeRegistration extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_employee_reg);
+
+
+        FirebaseVariables.mFirebaseDatabase = FirebaseDatabase.getInstance();
+        FirebaseVariables.mDatabaseReference = FirebaseVariables.mFirebaseDatabase.getReference().child("users");
+
+
         sharedpreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
         client = new OkHttpClient();
 
-        mAuth = FirebaseAuth.getInstance();
+        FirebaseVariables.mFirebaseAuth = FirebaseAuth.getInstance();
 
         mEmail = (EditText) findViewById(R.id.reg_email);
         mPassword = (EditText) findViewById(R.id.reg_password);
@@ -80,7 +86,7 @@ public class EmployeeRegistration extends AppCompatActivity {
         mLogin = (TextView) findViewById(R.id.goto_login);
 
 
-        TextView textView = (TextView)findViewById(R.id.emp_title);
+        TextView textView = (TextView) findViewById(R.id.emp_title);
         textView.setText("Signup");
         progressDialog = new ProgressDialog(this);
         mRegister.setOnClickListener(new View.OnClickListener() {
@@ -93,102 +99,59 @@ public class EmployeeRegistration extends AppCompatActivity {
         mLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(getApplicationContext(),EmployeeLogin.class));
+                startActivity(new Intent(getApplicationContext(), EmployeeLogin.class));
             }
         });
     }
-    private void registerUser(){
+
+    private void registerUser() {
         final String email = mEmail.getText().toString();
         final String password = mPassword.getText().toString();
         final String userid = email.split("@")[0];
 
         SharedPreferences.Editor editor = sharedpreferences.edit();
-        editor.putString("email",email);
-        editor.putString("password",password);
-        editor.putString("username",userid);
+        editor.putString("email", email);
+        editor.putString("password", password);
+        editor.putString("username", userid);
         editor.apply();
 
-        Log.e("email",email);
-        Log.e("password",password);
+        Log.e("email", email);
+        Log.e("password", password);
         Log.e("Username ", userid);
 
-        if(TextUtils.isEmpty(email)){
+        if (TextUtils.isEmpty(email)) {
             mEmail.setError("Enter Email");
             return;
         }
 
-        if(TextUtils.isEmpty(password)){
+        if (TextUtils.isEmpty(password)) {
             mPassword.setError("Enter Password");
             return;
         }
         progressDialog.setMessage("Registering Please Wait");
         progressDialog.show();
 
-        postdata = new JSONObject();
-
-        mAuth.createUserWithEmailAndPassword(email,password)
+        FirebaseVariables.mFirebaseAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if(task.isSuccessful()){
-                    try {
-                        postdata.put("User_Name", userid);
-                        postdata.put("email", email);
-                    } catch(JSONException e){
-                        e.printStackTrace();
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+
+                            FirebaseVariables.user = FirebaseVariables.mFirebaseAuth.getCurrentUser();
+                            UserFills userFills = new UserFills();
+                            FirebaseVariables.mDatabaseReference.child(FirebaseVariables.user.getUid()).setValue(userFills);
+                            Toast.makeText(EmployeeRegistration.this, "Registration Successful", Toast.LENGTH_SHORT).show();
+                            finish();
+                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                            intent.putExtra("email", email);
+                            intent.putExtra("username", userid);
+                            startActivity(intent);
+                        } else {
+                            Toast.makeText(EmployeeRegistration.this, "Registration Error", Toast.LENGTH_SHORT).show();
+                        }
+                        progressDialog.dismiss();
                     }
-
-                    RequestBody body = RequestBody.create(MEDIA_TYPE,
-                            postdata.toString());
-
-                    final Request request = new Request.Builder()
-                            .url("https://api.illiteracy22.hasura-app.io/User_Personal_Details/upload_user_details")
-                            .post(body)
-                            .addHeader("Content-Type", "application/json")
-                            .addHeader("cache-control", "no-cache")
-                            .build();
-
-
-                    client.newCall(request).enqueue(new Callback() {
-                        @Override
-                        public void onFailure(okhttp3.Call call, IOException e) {
-                            String mMessage = e.getMessage().toString();
-                            Log.w("failure Response", mMessage);
-                            //call.cancel();
-                        }
-
-                        @Override
-                        public void onResponse(okhttp3.Call call, Response response) throws IOException {
-
-                            String mMessage = response.body().string();
-                            if (response.isSuccessful()){
-                                try {
-                                    JSONObject json = new JSONObject(mMessage);
-                                    Log.e("JSON",json.toString());
-                                } catch (Exception e){
-                                    e.printStackTrace();
-                                }
-                            }
-                        }
-                    });
-
-
-
-                    Toast.makeText(EmployeeRegistration.this, "Data Uploaded", Toast.LENGTH_SHORT).show();
-                    finish();
-
-                    Intent intent = new Intent(getApplicationContext(),MainActivity.class);
-                    intent.putExtra("email",email);
-                    intent.putExtra("username",userid);
-                    startActivity(intent);
-
-
-            }else{
-                    Toast.makeText(EmployeeRegistration.this, "Registration Error", Toast.LENGTH_SHORT).show();
-                }
-                progressDialog.dismiss();
-            }
-        });
+                });
     }
 }
 

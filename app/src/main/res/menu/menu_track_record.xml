@@ -4,10 +4,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".activity.TrackRecord">
 
-    <item
+    <!--<item
         android:id="@+id/action_save"
         android:title="Save"
         android:icon="@drawable/ic_done"
-        app:showAsAction="always" />
+        app:showAsAction="always" />-->
+
+    <item android:id="@+id/action_save_user_history"
+        android:title="Save"
+        app:showAsAction="always"
+        android:orderInCategory="1"/>
+
+    <item android:id="@+id/bt_skip"
+        android:title="SKIP"
+        app:showAsAction="always"
+        android:orderInCategory="1"/>
 
 </menu>

@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:background="#e1e1e1"
-    android:layout_height="match_parent">
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:orientation="vertical"
+        android:layout_height="match_parent"
         android:layout_margin="20dp"
-        android:layout_height="match_parent">
+        android:orientation="vertical">
 
         <android.support.v7.widget.CardView
             android:layout_width="match_parent"
@@ -17,37 +17,36 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:orientation="vertical"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
                     <EditText
-                        android:layout_width="match_parent"
-                        android:layout_margin="10dp"
-                        android:text="Patient Username"
-                        android:editable="false"
                         android:id="@+id/user_username"
-                        android:layout_height="wrap_content" />
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:editable="false"
+                        android:text="Patient Username" />
 
                 </android.support.design.widget.TextInputLayout>
 
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <EditText
+                <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
-                    android:layout_margin="10dp"
-                    android:text="Patient Email"
-                    android:editable="false"
-                    android:id="@+id/user_email"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content">
 
-            </android.support.design.widget.TextInputLayout>
+                    <EditText
+                        android:id="@+id/user_email"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:editable="false"
+                        android:text="Patient Email" />
 
+                </android.support.design.widget.TextInputLayout>
 
             </LinearLayout>
 
@@ -55,35 +54,35 @@
 
         <android.support.v7.widget.CardView
             android:layout_width="match_parent"
-            android:layout_marginTop="20dp"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:orientation="vertical"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="User Details "
                     android:layout_marginLeft="10dp"
                     android:layout_marginTop="10dp"
-                    android:textStyle="bold"
+                    android:text="User Details "
+                    android:textColor="#212"
                     android:textSize="18sp"
-                    android:textColor="#212"/>
+                    android:textStyle="bold" />
 
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
                     <EditText
-                        android:layout_width="match_parent"
-                        android:layout_margin="10dp"
-                        android:hint="Patient Name"
                         android:id="@+id/user_name"
-                        android:layout_height="wrap_content" />
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:hint="Patient Name" />
 
                 </android.support.design.widget.TextInputLayout>
 
@@ -92,11 +91,11 @@
                     android:layout_height="wrap_content">
 
                     <EditText
-                        android:layout_width="match_parent"
-                        android:layout_margin="10dp"
-                        android:hint="Gender"
                         android:id="@+id/user_gender"
-                        android:layout_height="wrap_content" />
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:hint="Gender" />
 
                 </android.support.design.widget.TextInputLayout>
 
@@ -105,13 +104,28 @@
                     android:layout_height="wrap_content">
 
                     <EditText
+                        android:id="@+id/user_dob"
                         android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
                         android:layout_margin="10dp"
-                        android:hint="Age"
-                        android:inputType="number"
                         android:layout_marginTop="5dp"
+                        android:hint="Date of Birth"
+                        android:inputType="number" />
+
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
                         android:id="@+id/user_age"
-                        android:layout_height="wrap_content" />
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:layout_marginTop="5dp"
+                        android:hint="Age"
+                        android:inputType="number" />
 
                 </android.support.design.widget.TextInputLayout>
 
@@ -120,13 +134,13 @@
                     android:layout_height="wrap_content">
 
                     <EditText
-                        android:layout_width="match_parent"
-                        android:layout_margin="10dp"
-                        android:hint="Weight"
-                        android:inputType="number"
-                        android:layout_marginTop="5dp"
                         android:id="@+id/user_weight"
-                        android:layout_height="wrap_content" />
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:layout_marginTop="5dp"
+                        android:hint="Weight"
+                        android:inputType="number" />
 
                 </android.support.design.widget.TextInputLayout>
 
@@ -135,16 +149,69 @@
                     android:layout_height="wrap_content">
 
                     <EditText
-                        android:layout_width="match_parent"
-                        android:layout_margin="10dp"
-                        android:hint="Height"
-                        android:inputType="number"
-                        android:layout_marginTop="5dp"
                         android:id="@+id/user_height"
-                        android:layout_height="wrap_content" />
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:layout_marginTop="5dp"
+                        android:hint="Height"
+                        android:inputType="number" />
 
                 </android.support.design.widget.TextInputLayout>
 
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/user_phone"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:layout_marginTop="5dp"
+                        android:hint="Phone Number"
+                        android:inputType="number" />
+
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/user_address"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:hint="Address" />
+
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/user_state"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:hint="State" />
+
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/user_pin_code"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:hint="Pin Code" />
+
+                </android.support.design.widget.TextInputLayout>
 
             </LinearLayout>
 
@@ -169,12 +236,12 @@
         <!--//}-->
 
         <Button
-            android:layout_width="match_parent"
             android:id="@+id/update_patient"
-            android:text="Update Profile"
-            android:layout_marginBottom="40dp"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="10dp"/>
+            android:layout_marginBottom="40dp"
+            android:layout_marginTop="10dp"
+            android:text="Update Profile" />
     </LinearLayout>
 
 </ScrollView>

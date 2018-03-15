@@ -11,6 +11,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -174,8 +175,8 @@ public class TrackRecord extends AppCompatActivity {
                 }
             }
         });
-
-        Toast.makeText(TrackRecord.this, "Data Uploaded", Toast.LENGTH_SHORT).show();
+        FirebaseVariables.mDatabaseReference.child(FirebaseVariables.user.getUid()).child("history").setValue(true);
+        Toast.makeText(TrackRecord.this, "Medical History Uploaded", Toast.LENGTH_SHORT).show();
     }
 
     private void showUnsavedChangesDialog(
@@ -224,7 +225,7 @@ public class TrackRecord extends AppCompatActivity {
         // User clicked on a menu option in the app bar overflow menu
         switch (item.getItemId()) {
             // Respond to a click on the "Save" menu option
-            case R.id.action_save:
+            case R.id.action_save_user_history:
                 extractUserInputsFromUI();
                 // Otherwise if there are unsaved changes, setup a dialog to warn the user.
                 // Create a click listener to handle the user confirming that
@@ -242,6 +243,8 @@ public class TrackRecord extends AppCompatActivity {
                 showUnsavedChangesDialog(saveButtonClickListener);
                 return true;
 
+            case R.id.bt_skip:
+                finish();
         }
         return super.onOptionsItemSelected(item);
     }

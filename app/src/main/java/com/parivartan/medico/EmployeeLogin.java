@@ -16,6 +16,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.parivartan.medico.activity.FirebaseVariables;
 
 /**
  * Created by deepak on 07-02-2017.
@@ -27,16 +28,15 @@ public class EmployeeLogin extends AppCompatActivity {
     private Button mLogin;
     private Button mBack;
     private ProgressDialog progressDialog;
-    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_emp_login);
 
-        mAuth = FirebaseAuth.getInstance();
+        FirebaseVariables.mFirebaseAuth = FirebaseAuth.getInstance();
 
-        if(mAuth.getCurrentUser() !=null){
+        if(FirebaseVariables.mFirebaseAuth.getCurrentUser() !=null){
             //user is logged in
             finish();
             startActivity(new Intent(this,MainActivity.class));
@@ -77,10 +77,11 @@ public class EmployeeLogin extends AppCompatActivity {
         progressDialog.setMessage("Logging in Please Wait");
         progressDialog.show();
 
-        mAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+        FirebaseVariables.mFirebaseAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()){
+                    FirebaseVariables.user = FirebaseVariables.mFirebaseAuth.getCurrentUser();
                     finish();
                     Toast.makeText(EmployeeLogin.this,"Login Successful",Toast.LENGTH_SHORT).show();
                     startActivity(new Intent(getApplicationContext(),MainActivity.class));
