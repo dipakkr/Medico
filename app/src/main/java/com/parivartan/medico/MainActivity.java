@@ -81,6 +81,7 @@ public class MainActivity extends AppCompatActivity
     String med_dosage;
     String med_type;
     String type;
+    OkHttpClient client;
     JSONObject postdata;
     Button bt_analyse;
     //Percentage TextViews
@@ -100,7 +101,7 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        final OkHttpClient client = new OkHttpClient();
+        client = new OkHttpClient();
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         email = preferences.getString("email", "");
@@ -302,6 +303,7 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.action_settings) {
             try {
+                updateSessionLogout();
                 FirebaseAuth.getInstance().signOut();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -311,6 +313,59 @@ public class MainActivity extends AppCompatActivity
 
         return super.onOptionsItemSelected(item);
 
+    }
+
+    private void updateSessionLogout() {
+        postdata = new JSONObject();
+
+        try {
+            postdata.put("User_Name", username);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        RequestBody body = RequestBody.create(MEDIA_TYPE,
+                postdata.toString());
+
+        final Request request = new Request.Builder()
+                .url("https://api.illiteracy22.hasura-app.io/Auth/logout")
+                .post(body)
+                .addHeader("Content-Type", "application/json")
+                .addHeader("cache-control", "no-cache")
+                .build();
+
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(okhttp3.Call call, IOException e) {
+                String mMessage = e.getMessage().toString();
+                Log.w("failure Response", mMessage);
+                //call.cancel();
+            }
+
+            @Override
+            public void onResponse(okhttp3.Call call, Response response) throws IOException {
+
+                String mMessage = response.body().string();
+                if (response.isSuccessful()) {
+                    try {
+                        JSONObject json = new JSONObject(mMessage);
+                        //code = json.getInt("code");
+                        //Log.e("JSON", code + "");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+        /*if (code == 401) {
+            Toast.makeText(MainActivity.this, "Session Expires", Toast.LENGTH_SHORT).show();
+        } else if (code == 404) {
+            Toast.makeText(MainActivity.this, "User not found", Toast.LENGTH_SHORT).show();
+        } else if (code == 200) {
+            FirebaseVariables.mDatabaseReference.child(FirebaseVariables.user.getUid()).child("profile").setValue(true);
+            Toast.makeText(MainActivity.this, "Profile Details Uploaded", Toast.LENGTH_SHORT).show();
+        }*/
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
