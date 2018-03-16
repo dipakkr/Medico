@@ -178,14 +178,17 @@ public class TrackRecord extends AppCompatActivity {
                 }
             }
         });
-        if(code==401){
-            Toast.makeText(TrackRecord.this, "Session Expires", Toast.LENGTH_SHORT).show();
-        } else if (code == 404) {
-            Toast.makeText(TrackRecord.this, "User not found", Toast.LENGTH_SHORT).show();
-        }else if(code==200){
-            FirebaseVariables.mDatabaseReference.child(FirebaseVariables.user.getUid()).child("history").setValue(true);
-            Toast.makeText(TrackRecord.this, "Medical History Uploaded", Toast.LENGTH_SHORT).show();
-        }
+
+        FirebaseVariables.mDatabaseReference.child(FirebaseVariables.user.getUid()).child("history").setValue(true);
+
+//        if(code==401){
+//            Toast.makeText(TrackRecord.this, "Session Expires", Toast.LENGTH_SHORT).show();
+//        } else if (code == 404) {
+//            Toast.makeText(TrackRecord.this, "User not found", Toast.LENGTH_SHORT).show();
+//        }else if(code==200){
+//            FirebaseVariables.mDatabaseReference.child(FirebaseVariables.user.getUid()).child("history").setValue(true);
+//            Toast.makeText(TrackRecord.this, "Medical History Uploaded", Toast.LENGTH_SHORT).show();
+//        }
     }
 
     private void showUnsavedChangesDialog(
