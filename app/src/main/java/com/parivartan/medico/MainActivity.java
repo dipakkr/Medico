@@ -114,9 +114,9 @@ public class MainActivity extends AppCompatActivity
 
         if (FirebaseVariables.user == null) {
             startActivity(new Intent(this, EmployeeRegistration.class));
+        } else {
+            checkProfileForm();
         }
-
-
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -170,6 +170,8 @@ public class MainActivity extends AppCompatActivity
                     et_medicine_dosage.setError("You can't leave this empty.");
                 }
 
+                checkHistoryForm();
+
                 postdata = new JSONObject();
                 try {
                     postdata.put("Type", med_type);
@@ -219,6 +221,46 @@ public class MainActivity extends AppCompatActivity
                     }
                 });
                 updateUi();
+            }
+        });
+    }
+
+    private void checkProfileForm(){
+        FirebaseVariables.mDatabaseReference.child(FirebaseVariables.user.getUid()).child("profile").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (!(boolean) dataSnapshot.getValue()) {
+                    Intent intent = new Intent(MainActivity.this, PreProfileUpdate.class);
+                    intent.putExtra("checkNext",true);
+                    startActivity(intent);
+                } else {
+                    return;
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void checkHistoryForm(){
+        Toast.makeText(this, "You need to complete your medical history form before using analyse function", Toast.LENGTH_SHORT).show();
+        FirebaseVariables.mDatabaseReference.child(FirebaseVariables.user.getUid()).child("history").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (!(boolean) dataSnapshot.getValue()) {
+                    Intent intent = new Intent(MainActivity.this, TrackRecord.class);
+                    startActivity(intent);
+                } else {
+                    return;
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
             }
         });
     }

@@ -217,6 +217,11 @@ public class TrackRecord extends AppCompatActivity {
     public boolean onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
 
+        Intent newIntent =getIntent();
+        if(!newIntent.getBooleanExtra("checkSkip",false)){
+            menu.findItem(R.id.bt_skip).setVisible(false);
+        }
+
         return true;
     }
 

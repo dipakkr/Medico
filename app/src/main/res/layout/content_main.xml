@@ -52,7 +52,8 @@
                 android:layout_height="wrap_content"
                 android:hint="Dosage"
                 android:gravity="center_horizontal"
-                android:id="@+id/et_dosage"/>
+                android:id="@+id/et_dosage"
+                android:inputType="number" />
 
 
             <Button

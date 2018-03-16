@@ -7,6 +7,8 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -19,6 +21,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.parivartan.medico.MainActivity;
 import com.parivartan.medico.R;
 
 import org.json.JSONException;
@@ -91,10 +94,12 @@ public class PreProfileUpdate extends AppCompatActivity {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     saveUserDetails();
-                                    /*Intent intent = getIntent();
-                                    if(!intent.getBooleanExtra("history",true)){
-                                        startActivity(new Intent(PreProfileUpdate.this, TrackRecord.class));
-                                    }*/
+                                    Intent intent = getIntent();
+                                    if (intent.getBooleanExtra("checkNext", false)) {
+                                        Intent newIntent = new Intent(PreProfileUpdate.this, TrackRecord.class);
+                                        newIntent.putExtra("checkSkip", true);
+                                        startActivity(newIntent);
+                                    }
                                     finish();
                                 }
                             };
@@ -146,7 +151,7 @@ public class PreProfileUpdate extends AppCompatActivity {
             heightEditText.setError("You can't leave this empty.");
             flag = 0;
         }
-        if (mPhone.length()!=10) {
+        if (mPhone.length() != 10) {
             phoneEditText.setError("You can't leave this empty.");
             flag = 0;
         }
@@ -249,5 +254,15 @@ public class PreProfileUpdate extends AppCompatActivity {
         // Create and show the AlertDialog
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = getIntent();
+        if (intent.getBooleanExtra("checkNext", false)) {
+            Toast.makeText(this, "This form is mandatory to fill", Toast.LENGTH_SHORT).show();
+        } else {
+            super.onBackPressed();
+        }
     }
 }
