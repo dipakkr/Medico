@@ -86,6 +86,7 @@ public class MainActivity extends AppCompatActivity
     //Percentage TextViews
     TextView mAllergy, mPreg, mAge, mDisease, mDosage, mResistance, mOverall;
     String allergy, disease, pregnancy, resistance, age, dosage, overall;
+    private int code;
     private int count = 2;
     private String TAG = "MainActivity.class";
     MedicineAdapter medicineAdapter;
@@ -95,6 +96,7 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -176,6 +178,7 @@ public class MainActivity extends AppCompatActivity
                 try {
                     postdata.put("Type", med_type);
                     postdata.put("User_Name", username);
+                    postdata.put("Session_token", FirebaseVariables.user.getUid());
                     postdata.put("Medicine_Name", med_name);
                     postdata.put("Dosage", med_dosage);
                 } catch (JSONException e) {
@@ -205,6 +208,7 @@ public class MainActivity extends AppCompatActivity
                         if (response.isSuccessful()) {
                             try {
                                 JSONObject json = new JSONObject(mMessage);
+                                code = json.getInt("code");
                                 allergy = json.getString("allergy_percentage");
                                 disease = json.getString("Disease_condition_percentage");
                                 pregnancy = json.getString("Pregnancy_percentage");
@@ -213,25 +217,33 @@ public class MainActivity extends AppCompatActivity
                                 dosage = json.getString("dosage_percentage");
                                 overall = json.getString("aggerage_percentage");
 
-                                Log.e("Values", allergy + disease + pregnancy + resistance + age + dosage + overall);
+                                Log.e("Values", code + allergy + disease + pregnancy + resistance + age + dosage + overall);
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
                         }
                     }
                 });
-                updateUi();
+
+                if (code == 401) {
+                    Toast.makeText(MainActivity.this, "Session Expires", Toast.LENGTH_SHORT).show();
+                } else if (code == 404) {
+                    Toast.makeText(MainActivity.this, "Medicine not found in our database", Toast.LENGTH_SHORT).show();
+                    updateUi();
+                } else if (code == 200) {
+                    updateUi();
+                }
             }
         });
     }
 
-    private void checkProfileForm(){
+    private void checkProfileForm() {
         FirebaseVariables.mDatabaseReference.child(FirebaseVariables.user.getUid()).child("profile").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (!(boolean) dataSnapshot.getValue()) {
                     Intent intent = new Intent(MainActivity.this, PreProfileUpdate.class);
-                    intent.putExtra("checkNext",true);
+                    intent.putExtra("checkNext", true);
                     startActivity(intent);
                 } else {
                     return;
@@ -245,12 +257,12 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
-    private void checkHistoryForm(){
-        Toast.makeText(this, "You need to complete your medical history form before using analyse function", Toast.LENGTH_SHORT).show();
+    private void checkHistoryForm() {
         FirebaseVariables.mDatabaseReference.child(FirebaseVariables.user.getUid()).child("history").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (!(boolean) dataSnapshot.getValue()) {
+                    Toast.makeText(MainActivity.this, "You need to complete your medical history form before using analyse function", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(MainActivity.this, TrackRecord.class);
                     startActivity(intent);
                 } else {

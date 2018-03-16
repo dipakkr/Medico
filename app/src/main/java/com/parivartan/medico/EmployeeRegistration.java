@@ -26,6 +26,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 import com.parivartan.medico.activity.FirebaseVariables;
 import com.parivartan.medico.activity.PreProfileUpdate;
+import com.parivartan.medico.activity.TrackRecord;
 import com.parivartan.medico.model.PatientDetail;
 import com.parivartan.medico.model.UserFills;
 
@@ -66,7 +67,7 @@ public class EmployeeRegistration extends AppCompatActivity {
     JSONObject postdata;
 
     private int count = 2;
-
+    //private int code;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -145,6 +146,7 @@ public class EmployeeRegistration extends AppCompatActivity {
                             UserFills userFills = new UserFills();
                             FirebaseVariables.mDatabaseReference.child(FirebaseVariables.user.getUid()).setValue(userFills);
                             Toast.makeText(EmployeeRegistration.this, "Registration Successful", Toast.LENGTH_SHORT).show();
+                            updateSession(userid);
                             finish();
                             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                             intent.putExtra("email", email);
@@ -156,6 +158,59 @@ public class EmployeeRegistration extends AppCompatActivity {
                         progressDialog.dismiss();
                     }
                 });
+    }
+
+    private void updateSession(String userid){
+        postdata = new JSONObject();
+
+        try {
+            postdata.put("User_Name", userid);
+            postdata.put("Session_token",FirebaseVariables.user.getUid());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        RequestBody body = RequestBody.create(MEDIA_TYPE,
+                postdata.toString());
+
+        final Request request = new Request.Builder()
+                .url("https://api.illiteracy22.hasura-app.io/Auth/map_sessionID")
+                .post(body)
+                .addHeader("Content-Type", "application/json")
+                .addHeader("cache-control", "no-cache")
+                .build();
+
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(okhttp3.Call call, IOException e) {
+                String mMessage = e.getMessage().toString();
+                Log.w("failure Response", mMessage);
+                //call.cancel();
+            }
+
+            @Override
+            public void onResponse(okhttp3.Call call, Response response) throws IOException {
+
+                String mMessage = response.body().string();
+                if (response.isSuccessful()) {
+                    try {
+                        JSONObject json = new JSONObject(mMessage);
+                        //code = json.getInt("code");
+                        //Log.e("JSON", code+"");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+       /* if (code == 401) {
+            Toast.makeText(EmployeeRegistration.this, "Session Expires", Toast.LENGTH_SHORT).show();
+        } else if (code == 404) {
+            Toast.makeText(EmployeeRegistration.this, "Something Not Found", Toast.LENGTH_SHORT).show();
+        } else if (code == 200) {
+            Toast.makeText(EmployeeRegistration.this, "", Toast.LENGTH_SHORT).show();
+        }*/
     }
 
     @Override

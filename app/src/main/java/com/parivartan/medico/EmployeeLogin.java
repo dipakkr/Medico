@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -18,6 +19,18 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.parivartan.medico.activity.FirebaseVariables;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
 /**
  * Created by deepak on 07-02-2017.
  */
@@ -28,6 +41,12 @@ public class EmployeeLogin extends AppCompatActivity {
     private Button mLogin;
     private Button mBack;
     private ProgressDialog progressDialog;
+
+    public static final MediaType MEDIA_TYPE =
+            MediaType.parse("application/json");
+    OkHttpClient client;
+
+    JSONObject postdata;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -41,6 +60,8 @@ public class EmployeeLogin extends AppCompatActivity {
             finish();
             startActivity(new Intent(this,MainActivity.class));
         }
+
+        client = new OkHttpClient();
 
         mEtemail = (EditText)findViewById(R.id.login_email);
         mEtPass = (EditText)findViewById(R.id.login_pass);
@@ -62,7 +83,7 @@ public class EmployeeLogin extends AppCompatActivity {
         });
     }
     private void loginUser(){
-        String email = mEtemail.getText().toString();
+        final String email = mEtemail.getText().toString();
         String password = mEtPass.getText().toString();
 
         if(TextUtils.isEmpty(email)){
@@ -82,6 +103,7 @@ public class EmployeeLogin extends AppCompatActivity {
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()){
                     FirebaseVariables.user = FirebaseVariables.mFirebaseAuth.getCurrentUser();
+                    updateSession(email);
                     finish();
                     Toast.makeText(EmployeeLogin.this,"Login Successful",Toast.LENGTH_SHORT).show();
                     startActivity(new Intent(getApplicationContext(),MainActivity.class));
@@ -91,5 +113,56 @@ public class EmployeeLogin extends AppCompatActivity {
                 progressDialog.dismiss();
             }
         });
+    }
+
+    private void updateSession(String email){
+        postdata = new JSONObject();
+
+        try {
+            postdata.put("User_Name", email.split("@")[0]);
+            postdata.put("Session_token",FirebaseVariables.user.getUid());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        RequestBody body = RequestBody.create(MEDIA_TYPE,
+                postdata.toString());
+
+        final Request request = new Request.Builder()
+                .url("https://api.illiteracy22.hasura-app.io/Auth/update_session_ID")
+                .post(body)
+                .addHeader("Content-Type", "application/json")
+                .addHeader("cache-control", "no-cache")
+                .build();
+
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(okhttp3.Call call, IOException e) {
+                String mMessage = e.getMessage().toString();
+                Log.w("failure Response", mMessage);
+                //call.cancel();
+            }
+
+            @Override
+            public void onResponse(okhttp3.Call call, Response response) throws IOException {
+
+                String mMessage = response.body().string();
+                if (response.isSuccessful()) {
+                    try {
+                        JSONObject json = new JSONObject(mMessage);
+                        //code = json.getInt("code");
+                        //Log.e("JSON", code+"");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+        //if(code==401){
+        //    Toast.makeText(TrackRecord.this, "Session Expires", Toast.LENGTH_SHORT).show();
+        //} else if(code==200){
+
+        //}
     }
 }

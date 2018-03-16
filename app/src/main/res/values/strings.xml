@@ -35,8 +35,8 @@
     <string name="employee_location">City</string>
     <string name="default_name">Your Name</string>
 
-    <string name="gender_other">Other</string>
-    <string name="gender_male">Male</string>
-    <string name="gender_female">Female</string>
+    <string name="gender_other">other</string>
+    <string name="gender_male">male</string>
+    <string name="gender_female">female</string>
 
 </resources>

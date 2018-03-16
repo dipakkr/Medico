@@ -55,6 +55,7 @@ public class PreProfileUpdate extends AppCompatActivity {
     EditText phoneEditText, addressEditText, stateEditText, pinCodeEditText;
     static EditText ageEditText, dobEditText;
     String mEmail, mUsername, mPatientName, mGender, mAge, mWeight, mHeight, mDOB, mPhone, mAddress, mState, mPinCode;
+    private int code;
     OkHttpClient client;
     JSONObject postdata;
 
@@ -244,6 +245,7 @@ public class PreProfileUpdate extends AppCompatActivity {
 
         try {
             postdata.put("User_Name", mUsername);
+            postdata.put("Session_token",FirebaseVariables.user.getUid());
             postdata.put("name", mPatientName);
             postdata.put("gender", mGender);
             postdata.put("dob", mDOB);
@@ -286,15 +288,22 @@ public class PreProfileUpdate extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     try {
                         JSONObject json = new JSONObject(mMessage);
-                        Log.e("JSON", json.toString());
+                        code = json.getInt("code");
+                        Log.e("JSON", code+"");
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
             }
         });
-        FirebaseVariables.mDatabaseReference.child(FirebaseVariables.user.getUid()).child("profile").setValue(true);
-        Toast.makeText(PreProfileUpdate.this, "Profile Details Uploaded", Toast.LENGTH_SHORT).show();
+        if(code==401){
+            Toast.makeText(PreProfileUpdate.this, "Session Expires", Toast.LENGTH_SHORT).show();
+        } else if (code == 404) {
+            Toast.makeText(PreProfileUpdate.this, "User not found", Toast.LENGTH_SHORT).show();
+        }else if(code==200){
+            FirebaseVariables.mDatabaseReference.child(FirebaseVariables.user.getUid()).child("profile").setValue(true);
+            Toast.makeText(PreProfileUpdate.this, "Profile Details Uploaded", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void showUnsavedChangesDialog(

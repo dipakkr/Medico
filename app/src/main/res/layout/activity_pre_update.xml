@@ -109,8 +109,8 @@
                         android:layout_height="wrap_content"
                         android:layout_margin="10dp"
                         android:layout_marginTop="5dp"
-                        android:hint="Date of Birth"
-                        android:editable="false" />
+                        android:editable="false"
+                        android:hint="Date of Birth" />
 
                 </android.support.design.widget.TextInputLayout>
 
@@ -124,8 +124,8 @@
                         android:layout_height="wrap_content"
                         android:layout_margin="10dp"
                         android:layout_marginTop="5dp"
-                        android:hint="Age"
-                        android:editable="false" />
+                        android:editable="false"
+                        android:hint="Age" />
 
                 </android.support.design.widget.TextInputLayout>
 

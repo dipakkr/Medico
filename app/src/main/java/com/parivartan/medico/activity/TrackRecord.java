@@ -90,6 +90,7 @@ public class TrackRecord extends AppCompatActivity {
     private EditText mOther;
     private EditText mGeneticDiseaseEditText;
     private String json;
+    int code;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -130,6 +131,7 @@ public class TrackRecord extends AppCompatActivity {
 
         try {
             postdata.put("User_Name", username);
+            postdata.put("Session_token",FirebaseVariables.user.getUid());
             postdata.put("Allergens", allergens);
             postdata.put("Resistance", resistance);
             postdata.put("Pregnancy", pregnancy);
@@ -168,15 +170,22 @@ public class TrackRecord extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     try {
                         JSONObject json = new JSONObject(mMessage);
-                        Log.e("JSON", json.toString());
+                        code = json.getInt("code");
+                        Log.e("JSON", code+"");
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
             }
         });
-        FirebaseVariables.mDatabaseReference.child(FirebaseVariables.user.getUid()).child("history").setValue(true);
-        Toast.makeText(TrackRecord.this, "Medical History Uploaded", Toast.LENGTH_SHORT).show();
+        if(code==401){
+            Toast.makeText(TrackRecord.this, "Session Expires", Toast.LENGTH_SHORT).show();
+        } else if (code == 404) {
+            Toast.makeText(TrackRecord.this, "User not found", Toast.LENGTH_SHORT).show();
+        }else if(code==200){
+            FirebaseVariables.mDatabaseReference.child(FirebaseVariables.user.getUid()).child("history").setValue(true);
+            Toast.makeText(TrackRecord.this, "Medical History Uploaded", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void showUnsavedChangesDialog(
