@@ -1,12 +1,15 @@
 package com.parivartan.medico.activity;
 
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -17,6 +20,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,7 +32,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
 
 import okhttp3.Callback;
 import okhttp3.MediaType;
@@ -45,8 +51,9 @@ public class PreProfileUpdate extends AppCompatActivity {
 
     public static final MediaType MEDIA_TYPE =
             MediaType.parse("application/json");
-    EditText usernameEditText, emailEditText, nameEditText, dobEditText, ageEditText, weightEditText, genderEditText, heightEditText;
+    EditText usernameEditText, emailEditText, nameEditText, weightEditText, genderEditText, heightEditText;
     EditText phoneEditText, addressEditText, stateEditText, pinCodeEditText;
+    static EditText ageEditText, dobEditText;
     String mEmail, mUsername, mPatientName, mGender, mAge, mWeight, mHeight, mDOB, mPhone, mAddress, mState, mPinCode;
     OkHttpClient client;
     JSONObject postdata;
@@ -80,6 +87,23 @@ public class PreProfileUpdate extends AppCompatActivity {
         usernameEditText.setText(mUsername);
         emailEditText.setText(mEmail);
 
+        dobEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    DialogFragment newFragment = new DatePickerFragment();
+                    newFragment.show(getSupportFragmentManager(), "datePicker");
+                }
+            }
+        });
+        dobEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DialogFragment newFragment = new DatePickerFragment();
+                newFragment.show(getSupportFragmentManager(), "datePicker");
+            }
+        });
+
         Button updateProfileButton = (Button) findViewById(R.id.update_patient);
         updateProfileButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -109,6 +133,45 @@ public class PreProfileUpdate extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    public static class DatePickerFragment extends DialogFragment
+            implements DatePickerDialog.OnDateSetListener {
+
+        final Calendar c = Calendar.getInstance();
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            // Use the current date as the default date in the picker
+            int year = c.get(Calendar.YEAR);
+            int month = c.get(Calendar.MONTH);
+            int day = c.get(Calendar.DAY_OF_MONTH);
+
+            // Create a new instance of DatePickerDialog and return it
+            return new DatePickerDialog(getActivity(), this, year, month, day);
+        }
+
+        public void onDateSet(DatePicker view, int year, int month, int day) {
+            // Do something with the date chosen by the user
+            c.set(year, month, day);
+            SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
+            dobEditText.setText(format.format(c.getTime()));
+            getAge(year,month,day);
+        }
+    }
+
+    private static void getAge(int year, int month, int day){
+        Calendar dob = Calendar.getInstance();
+        Calendar today = Calendar.getInstance();
+
+        dob.set(year, month, day);
+
+        int age = today.get(Calendar.YEAR) - dob.get(Calendar.YEAR);
+
+        if (today.get(Calendar.DAY_OF_YEAR) < dob.get(Calendar.DAY_OF_YEAR)){
+            age--;
+        }
+
+        ageEditText.setText(Integer.toString(age));
     }
 
     private void extractUserInputsFromUI() {
@@ -151,7 +214,7 @@ public class PreProfileUpdate extends AppCompatActivity {
             heightEditText.setError("You can't leave this empty.");
             flag = 0;
         }
-        if (mPhone.length() != 10) {
+        if (TextUtils.isEmpty(mPhone)) {
             phoneEditText.setError("You can't leave this empty.");
             flag = 0;
         }

@@ -50,7 +50,7 @@
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Dosage"
+                android:hint="Dosage in mg"
                 android:gravity="center_horizontal"
                 android:id="@+id/et_dosage"
                 android:inputType="number" />

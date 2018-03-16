@@ -110,7 +110,7 @@
                         android:layout_margin="10dp"
                         android:layout_marginTop="5dp"
                         android:hint="Date of Birth"
-                        android:inputType="number" />
+                        android:editable="false" />
 
                 </android.support.design.widget.TextInputLayout>
 
@@ -125,7 +125,7 @@
                         android:layout_margin="10dp"
                         android:layout_marginTop="5dp"
                         android:hint="Age"
-                        android:inputType="number" />
+                        android:editable="false" />
 
                 </android.support.design.widget.TextInputLayout>
 
@@ -139,7 +139,7 @@
                         android:layout_height="wrap_content"
                         android:layout_margin="10dp"
                         android:layout_marginTop="5dp"
-                        android:hint="Weight"
+                        android:hint="Weight in Kg"
                         android:inputType="number" />
 
                 </android.support.design.widget.TextInputLayout>
@@ -154,7 +154,7 @@
                         android:layout_height="wrap_content"
                         android:layout_margin="10dp"
                         android:layout_marginTop="5dp"
-                        android:hint="Height"
+                        android:hint="Height in Cm"
                         android:inputType="number" />
 
                 </android.support.design.widget.TextInputLayout>
