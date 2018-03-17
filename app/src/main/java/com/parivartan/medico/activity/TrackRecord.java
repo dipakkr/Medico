@@ -127,7 +127,7 @@ public class TrackRecord extends AppCompatActivity implements LoaderManager.Load
         updateHistoryUi();
     }
 
-    private void updateHistoryUi(){
+    private void updateHistoryUi() {
         FirebaseVariables.mDatabaseReference.child(FirebaseVariables.user.getUid()).child("history").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -151,9 +151,9 @@ public class TrackRecord extends AppCompatActivity implements LoaderManager.Load
                         loaderManager.initLoader(PatientHistoryLoader_LOADER_ID, null, TrackRecord.this);
                     }
 
-                    urlToSend="https://api.illiteracy22.hasura-app.io/User_History_Upload/update_user_history";
+                    urlToSend = "https://api-illiteracy22.azurewebsites.net/User_History_Upload/update_user_history";
                 } else {
-                    urlToSend = "https://api.illiteracy22.hasura-app.io/User_History_Upload/upload_user_history";
+                    urlToSend = "https://api-illiteracy22.azurewebsites.net/User_History_Upload/upload_user_history";
                 }
             }
 
@@ -181,7 +181,7 @@ public class TrackRecord extends AppCompatActivity implements LoaderManager.Load
 
         try {
             postdata.put("User_Name", username);
-            postdata.put("Session_token",FirebaseVariables.user.getUid());
+            postdata.put("Session_token", FirebaseVariables.user.getUid());
             postdata.put("Allergens", allergens);
             postdata.put("Resistance", resistance);
             postdata.put("Pregnancy", pregnancy);
@@ -221,27 +221,41 @@ public class TrackRecord extends AppCompatActivity implements LoaderManager.Load
                     try {
                         JSONObject json = new JSONObject(mMessage);
                         code = json.getInt("code");
-                        Log.e("JSON", code+"");
+                        Log.e("Yash", code + "");
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
+
+                /*if (code == 401) {
+                    //Toast.makeText(TrackRecord.this, "Session Expires", Toast.LENGTH_SHORT).show();
+                } else if (code == 404) {
+                    //Toast.makeText(TrackRecord.this, "User not found", Toast.LENGTH_SHORT).show();
+                } else if (code == 200) {
+                    FirebaseVariables.mDatabaseReference.child(FirebaseVariables.user.getUid()).child("history").setValue(true);
+                    //Toast.makeText(TrackRecord.this, "Medical history uploaded successfully", Toast.LENGTH_SHORT).show();
+                }*/
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (code == 401) {
+                            Toast.makeText(TrackRecord.this, "Session Expires", Toast.LENGTH_SHORT).show();
+                        } else if (code == 404) {
+                            Toast.makeText(TrackRecord.this, "User not found", Toast.LENGTH_SHORT).show();
+                        } else if (code == 200) {
+                            Toast.makeText(TrackRecord.this, "Medical history uploaded successfully", Toast.LENGTH_SHORT).show();
+                            FirebaseVariables.mDatabaseReference.child(FirebaseVariables.user.getUid()).child("history").setValue(true);
+                        }
+                    }
+                });
             }
         });
-        FirebaseVariables.mDatabaseReference.child(FirebaseVariables.user.getUid()).child("history").setValue(true);
-        Toast.makeText(TrackRecord.this, "Medical History Uploaded", Toast.LENGTH_SHORT).show();
-        /*if(code==401){
-            Toast.makeText(TrackRecord.this, "Session Expires", Toast.LENGTH_SHORT).show();
-        } else if (code == 404) {
-            Toast.makeText(TrackRecord.this, "User not found", Toast.LENGTH_SHORT).show();
-        }else if(code==200){
-
-        }*/
     }
 
     @Override
     public Loader<PatientHistory> onCreateLoader(int i, Bundle bundle) {
-        return new PatientHistoryLoader(this, "https://api.illiteracy22.hasura-app.io/User_History_Upload/download_user_history/"+username+"/"+FirebaseVariables.user.getUid());
+        return new PatientHistoryLoader(this, "https://api-illiteracy22.azurewebsites.net/User_History_Upload/download_user_history/" + username + "/" + FirebaseVariables.user.getUid());
     }
 
     @Override
@@ -299,8 +313,8 @@ public class TrackRecord extends AppCompatActivity implements LoaderManager.Load
     public boolean onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
 
-        Intent newIntent =getIntent();
-        if(!newIntent.getBooleanExtra("checkSkip",false)){
+        Intent newIntent = getIntent();
+        if (!newIntent.getBooleanExtra("checkSkip", false)) {
             menu.findItem(R.id.bt_skip).setVisible(false);
         }
 

@@ -2,6 +2,7 @@ package com.parivartan.medico.activity;
 
 import android.text.TextUtils;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.parivartan.medico.model.PatientHistory;
 
@@ -154,16 +155,25 @@ public final class PatientHistoryQueryUtils {
             // Create a JSONObject from the JSON response string
             // Create a JSONObject from the JSON response string
             JSONObject baseJsonResponse = new JSONObject(patientHistoryJSON);
+            int code = baseJsonResponse.getInt("code");
+            Log.e("Yash", code+"");
+            if(code==401){
 
-            patientHistory.setUsername(baseJsonResponse.getString("User_Name"));
-            patientHistory.setAllergens(Arrays.asList(baseJsonResponse.getString("Allergens").replaceAll("[\\[\\]]", "").replaceAll("\\s*,\\s*", ",").split(",")));
-            patientHistory.setResistance(Arrays.asList(baseJsonResponse.getString("Resistance").replaceAll("[\\[\\]]", "").replaceAll("\\s*,\\s*", ",").split(",")));
-            patientHistory.setPregnancy(baseJsonResponse.getBoolean("Pregnancy"));
-            patientHistory.setDiabetes(baseJsonResponse.getBoolean("diabetes"));
-            patientHistory.setHighbloodPressure(baseJsonResponse.getBoolean("highBloodPressure"));
-            patientHistory.setHighCholestrol(baseJsonResponse.getBoolean("highCholesterol"));
-            patientHistory.setOthers(Arrays.asList(baseJsonResponse.getString("other").replaceAll("[\\[\\]]", "").replaceAll("\\s*,\\s*", ",").split(",")));
-            patientHistory.setGeneticDisesase(Arrays.asList(baseJsonResponse.getString("geneticDisease").replaceAll("[\\[\\]]", "").replaceAll("\\s*,\\s*", ",").split(",")));
+            } else if (code == 404) {
+
+            }else if(code==200){
+                JSONObject resultJsonResponse = baseJsonResponse.getJSONObject("result");
+
+                patientHistory.setUsername(resultJsonResponse.getString("User_Name"));
+                patientHistory.setAllergens(Arrays.asList(resultJsonResponse.getString("Allergens").replaceAll("[\\[\\]]", "").replaceAll("\\s*,\\s*", ",").split(",")));
+                patientHistory.setResistance(Arrays.asList(resultJsonResponse.getString("Resistance").replaceAll("[\\[\\]]", "").replaceAll("\\s*,\\s*", ",").split(",")));
+                patientHistory.setPregnancy(resultJsonResponse.getBoolean("Pregnancy"));
+                patientHistory.setDiabetes(resultJsonResponse.getBoolean("diabetes"));
+                patientHistory.setHighbloodPressure(resultJsonResponse.getBoolean("highBloodPressure"));
+                patientHistory.setHighCholestrol(resultJsonResponse.getBoolean("highCholesterol"));
+                patientHistory.setOthers(Arrays.asList(resultJsonResponse.getString("other").replaceAll("[\\[\\]]", "").replaceAll("\\s*,\\s*", ",").split(",")));
+                patientHistory.setGeneticDisesase(Arrays.asList(resultJsonResponse.getString("geneticDisease").replaceAll("[\\[\\]]", "").replaceAll("\\s*,\\s*", ",").split(",")));
+            }
 
         } catch (JSONException e) {
             // If an error is thrown when executing any of the above statements in the "try" block,

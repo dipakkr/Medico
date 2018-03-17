@@ -69,7 +69,7 @@ import static com.parivartan.medico.activity.TrackRecord.LOG_TAG;
  * Created by root on 3/7/18.
  */
 
-public class PreProfileUpdate extends AppCompatActivity implements LoaderManager.LoaderCallbacks<PatientDetail>{
+public class PreProfileUpdate extends AppCompatActivity implements LoaderManager.LoaderCallbacks<PatientDetail> {
 
     public static final MediaType MEDIA_TYPE =
             MediaType.parse("application/json");
@@ -162,7 +162,7 @@ public class PreProfileUpdate extends AppCompatActivity implements LoaderManager
         });
     }
 
-    private void updateProfileUi(){
+    private void updateProfileUi() {
         FirebaseVariables.mDatabaseReference.child(FirebaseVariables.user.getUid()).child("profile").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -186,9 +186,9 @@ public class PreProfileUpdate extends AppCompatActivity implements LoaderManager
                         loaderManager.initLoader(PatienDetailLoader_LOADER_ID, null, PreProfileUpdate.this);
                     }
 
-                    urlToSend="https://api.illiteracy22.hasura-app.io/User_Personal_Details/update_user_details";
+                    urlToSend = "https://api-illiteracy22.azurewebsites.net/User_Personal_Details/update_user_details";
                 } else {
-                    urlToSend = "https://api.illiteracy22.hasura-app.io/User_Personal_Details/upload_user_details";
+                    urlToSend = "https://api-illiteracy22.azurewebsites.net/User_Personal_Details/upload_user_details";
                 }
             }
 
@@ -201,7 +201,7 @@ public class PreProfileUpdate extends AppCompatActivity implements LoaderManager
 
     @Override
     public Loader<PatientDetail> onCreateLoader(int i, Bundle bundle) {
-        return new PatientDetailLoader(this, "https://api.illiteracy22.hasura-app.io/User_Personal_Details/download_user_details/"+mUsername+"/"+FirebaseVariables.user.getUid());
+        return new PatientDetailLoader(this, "https://api-illiteracy22.azurewebsites.net/User_Personal_Details/download_user_details/" + mUsername + "/" + FirebaseVariables.user.getUid());
     }
 
     @Override
@@ -227,6 +227,7 @@ public class PreProfileUpdate extends AppCompatActivity implements LoaderManager
             implements DatePickerDialog.OnDateSetListener {
 
         final Calendar c = Calendar.getInstance();
+
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             // Use the current date as the default date in the picker
@@ -243,11 +244,11 @@ public class PreProfileUpdate extends AppCompatActivity implements LoaderManager
             c.set(year, month, day);
             SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
             dobEditText.setText(format.format(c.getTime()));
-            getAge(year,month,day);
+            getAge(year, month, day);
         }
     }
 
-    private static void getAge(int year, int month, int day){
+    private static void getAge(int year, int month, int day) {
         Calendar dob = Calendar.getInstance();
         Calendar today = Calendar.getInstance();
 
@@ -255,7 +256,7 @@ public class PreProfileUpdate extends AppCompatActivity implements LoaderManager
 
         int age = today.get(Calendar.YEAR) - dob.get(Calendar.YEAR);
 
-        if (today.get(Calendar.DAY_OF_YEAR) < dob.get(Calendar.DAY_OF_YEAR)){
+        if (today.get(Calendar.DAY_OF_YEAR) < dob.get(Calendar.DAY_OF_YEAR)) {
             age--;
         }
 
@@ -332,7 +333,7 @@ public class PreProfileUpdate extends AppCompatActivity implements LoaderManager
 
         try {
             postdata.put("User_Name", mUsername);
-            postdata.put("Session_token",FirebaseVariables.user.getUid());
+            postdata.put("Session_token", FirebaseVariables.user.getUid());
             postdata.put("name", mPatientName);
             postdata.put("gender", mGender);
             postdata.put("dob", mDOB);
@@ -376,22 +377,37 @@ public class PreProfileUpdate extends AppCompatActivity implements LoaderManager
                     try {
                         JSONObject json = new JSONObject(mMessage);
                         code = json.getInt("code");
-                        Log.e("JSON", code+"");
+                        Log.e("Yash", code + "");
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
+
+
+                /*if (code == 401) {
+                    //Toast.makeText(PreProfileUpdate.this, "Session Expires", Toast.LENGTH_SHORT).show();
+                } else if (code == 404) {
+                    //Toast.makeText(PreProfileUpdate.this, "User not found", Toast.LENGTH_SHORT).show();
+                } else if (code == 200) {
+                    FirebaseVariables.mDatabaseReference.child(FirebaseVariables.user.getUid()).child("profile").setValue(true);
+                    //Toast.makeText(PreProfileUpdate.this, "Profile uploaded Successfully", Toast.LENGTH_SHORT).show();
+                }*/
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (code == 401) {
+                            Toast.makeText(PreProfileUpdate.this, "Session Expires", Toast.LENGTH_SHORT).show();
+                        } else if (code == 404) {
+                            Toast.makeText(PreProfileUpdate.this, "User not found", Toast.LENGTH_SHORT).show();
+                        } else if (code == 200) {
+                            Toast.makeText(PreProfileUpdate.this, "Profile uploaded Successfully", Toast.LENGTH_SHORT).show();
+                            FirebaseVariables.mDatabaseReference.child(FirebaseVariables.user.getUid()).child("profile").setValue(true);
+                        }
+                    }
+                });
             }
         });
-        FirebaseVariables.mDatabaseReference.child(FirebaseVariables.user.getUid()).child("profile").setValue(true);
-        Toast.makeText(PreProfileUpdate.this, "Profile Details Uploaded", Toast.LENGTH_SHORT).show();
-        /*if(code==401){
-            Toast.makeText(PreProfileUpdate.this, "Session Expires", Toast.LENGTH_SHORT).show();
-        } else if (code == 404) {
-            Toast.makeText(PreProfileUpdate.this, "User not found", Toast.LENGTH_SHORT).show();
-        }else if(code==200){
-
-        }*/
     }
 
     private void showUnsavedChangesDialog(

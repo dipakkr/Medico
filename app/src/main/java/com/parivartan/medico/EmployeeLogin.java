@@ -121,6 +121,7 @@ public class EmployeeLogin extends AppCompatActivity {
         try {
             postdata.put("User_Name", email.split("@")[0]);
             postdata.put("Session_token",FirebaseVariables.user.getUid());
+            postdata.put("pass",1997);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -129,7 +130,7 @@ public class EmployeeLogin extends AppCompatActivity {
                 postdata.toString());
 
         final Request request = new Request.Builder()
-                .url("https://api.illiteracy22.hasura-app.io/Auth/update_session_ID")
+                .url("https://api-illiteracy22.azurewebsites.net/Auth/update_session_ID")
                 .post(body)
                 .addHeader("Content-Type", "application/json")
                 .addHeader("cache-control", "no-cache")
@@ -151,18 +152,12 @@ public class EmployeeLogin extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     try {
                         JSONObject json = new JSONObject(mMessage);
-                        //code = json.getInt("code");
-                        //Log.e("JSON", code+"");
+                        Log.e("JSON", json.toString());
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
             }
         });
-        //if(code==401){
-        //    Toast.makeText(TrackRecord.this, "Session Expires", Toast.LENGTH_SHORT).show();
-        //} else if(code==200){
-
-        //}
     }
 }

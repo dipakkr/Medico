@@ -1,7 +1,9 @@
 package com.parivartan.medico.activity;
 
+import android.app.Activity;
 import android.text.TextUtils;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.parivartan.medico.model.PatientDetail;
 
@@ -153,19 +155,29 @@ public final class PatientDetailQueryUtils {
             // Create a JSONObject from the JSON response string
             // Create a JSONObject from the JSON response string
             JSONObject baseJsonResponse = new JSONObject(patientDetailJSON);
+            int code = baseJsonResponse.getInt("code");
+            Log.e("Yash", code+"");
 
-            patientDetail.setUsername(baseJsonResponse.getString("User_Name"));
-            patientDetail.setName(baseJsonResponse.getString("name"));
-            patientDetail.setGender(baseJsonResponse.getString("gender"));
-            patientDetail.setDob(baseJsonResponse.getString("dob"));
-            patientDetail.setAge(baseJsonResponse.getString("age"));
-            patientDetail.setHeight(baseJsonResponse.getString("heght"));
-            patientDetail.setWeight(baseJsonResponse.getString("weight"));
-            patientDetail.setEmail(baseJsonResponse.getString("email"));
-            patientDetail.setPhone(baseJsonResponse.getString("phoneNo"));
-            patientDetail.setAddress(baseJsonResponse.getString("address"));
-            patientDetail.setState(baseJsonResponse.getString("state"));
-            patientDetail.setPincode(baseJsonResponse.getString("pinCode"));
+            if(code==401){
+
+            } else if (code == 404) {
+
+            }else if(code==200){
+                JSONObject resultJsonResponse = baseJsonResponse.getJSONObject("result");
+
+                patientDetail.setUsername(resultJsonResponse.getString("User_Name"));
+                patientDetail.setName(resultJsonResponse.getString("name"));
+                patientDetail.setGender(resultJsonResponse.getString("gender"));
+                patientDetail.setDob(resultJsonResponse.getString("dob"));
+                patientDetail.setAge(resultJsonResponse.getString("age"));
+                patientDetail.setHeight(resultJsonResponse.getString("heght"));
+                patientDetail.setWeight(resultJsonResponse.getString("weight"));
+                patientDetail.setEmail(resultJsonResponse.getString("email"));
+                patientDetail.setPhone(resultJsonResponse.getString("phoneNo"));
+                patientDetail.setAddress(resultJsonResponse.getString("address"));
+                patientDetail.setState(resultJsonResponse.getString("state"));
+                patientDetail.setPincode(resultJsonResponse.getString("pinCode"));
+            }
 
         } catch (JSONException e) {
             // If an error is thrown when executing any of the above statements in the "try" block,

@@ -67,7 +67,6 @@ public class EmployeeRegistration extends AppCompatActivity {
     JSONObject postdata;
 
     private int count = 2;
-    //private int code;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -166,6 +165,7 @@ public class EmployeeRegistration extends AppCompatActivity {
         try {
             postdata.put("User_Name", userid);
             postdata.put("Session_token",FirebaseVariables.user.getUid());
+            postdata.put("pass",1997);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -174,7 +174,7 @@ public class EmployeeRegistration extends AppCompatActivity {
                 postdata.toString());
 
         final Request request = new Request.Builder()
-                .url("https://api.illiteracy22.hasura-app.io/Auth/map_sessionID")
+                .url("https://api-illiteracy22.azurewebsites.net/Auth/map_sessionID")
                 .post(body)
                 .addHeader("Content-Type", "application/json")
                 .addHeader("cache-control", "no-cache")
@@ -196,21 +196,13 @@ public class EmployeeRegistration extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     try {
                         JSONObject json = new JSONObject(mMessage);
-                        //code = json.getInt("code");
-                        //Log.e("JSON", code+"");
+                        Log.e("JSON", json.toString());
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
             }
         });
-       /* if (code == 401) {
-            Toast.makeText(EmployeeRegistration.this, "Session Expires", Toast.LENGTH_SHORT).show();
-        } else if (code == 404) {
-            Toast.makeText(EmployeeRegistration.this, "Something Not Found", Toast.LENGTH_SHORT).show();
-        } else if (code == 200) {
-            Toast.makeText(EmployeeRegistration.this, "", Toast.LENGTH_SHORT).show();
-        }*/
     }
 
     @Override

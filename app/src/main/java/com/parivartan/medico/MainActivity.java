@@ -155,7 +155,6 @@ public class MainActivity extends AppCompatActivity
         mOverall = (TextView) findViewById(R.id.overall_percentage);
 
 
-
         postdata = new JSONObject();
 
         bt_analyse.setOnClickListener(new View.OnClickListener() {
@@ -188,7 +187,7 @@ public class MainActivity extends AppCompatActivity
                 RequestBody body = RequestBody.create(MEDIA_TYPE,
                         postdata.toString());
                 final Request request = new Request.Builder()
-                        .url("https://api.illiteracy22.hasura-app.io/ML_Analysis/Evaluation")
+                        .url("https://api-illiteracy22.azurewebsites.net/ML_Analysis/Evaluation")
                         .post(body)
                         .addHeader("Content-Type", "application/json")
                         .addHeader("cache-control", "no-cache")
@@ -217,23 +216,43 @@ public class MainActivity extends AppCompatActivity
                                 age = json.getString("age_percentage");
                                 dosage = json.getString("dosage_percentage");
                                 overall = json.getString("aggerage_percentage");
-                                Log.e("yash","==============================================================");
-                                Log.e("Values", code +"\n"+ allergy +"\n"+ disease +"\n"+ pregnancy +"\n"+ resistance +"\n"+ age +"\n"+ dosage +"\n"+ overall);
-                                Log.e("yash","==============================================================");
+                                Log.e("Yash", "==============================================================");
+                                Log.e("Values", code + "\n" + allergy + "\n" + disease + "\n" + pregnancy + "\n" + resistance + "\n" + age + "\n" + dosage + "\n" + overall);
+                                Log.e("Yash", "==============================================================");
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
                         }
+
+                        /*if (code == 401) {
+                            //Toast.makeText(MainActivity.this, "Session Expires", Toast.LENGTH_SHORT).show();
+                        } else if (code == 404) {
+                            //Toast.makeText(MainActivity.this, "Medicine not found in our database", Toast.LENGTH_SHORT).show();
+                        } else if (code == 200) {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    updateUi();
+                                }
+                            });
+                        }*/
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (code == 401) {
+                                    Toast.makeText(MainActivity.this, "Session Expires", Toast.LENGTH_SHORT).show();
+                                    updateUiZero();
+                                } else if (code == 404) {
+                                    Toast.makeText(MainActivity.this, "Medicine not found in our database", Toast.LENGTH_LONG).show();
+                                    updateUiZero();
+                                } else if (code == 200) {
+                                    updateUi();
+                                }
+                            }
+                        });
                     }
                 });
-
-                if (code == 401) {
-                    Toast.makeText(MainActivity.this, "Session Expires", Toast.LENGTH_SHORT).show();
-                } else if (code == 404) {
-                    Toast.makeText(MainActivity.this, "Medicine not found in our database", Toast.LENGTH_SHORT).show();
-                } else if (code == 200) {
-                    updateUi();
-                }
             }
         });
     }
@@ -290,6 +309,18 @@ public class MainActivity extends AppCompatActivity
         mOverall.setText("Overall Percentage - " + overall);
     }
 
+    private void updateUiZero() {
+
+        mAllergy.setPercent(0);
+        mDisease.setPercent(0);
+        mPreg.setPercent(0);
+        mResistance.setPercent(0);
+        mAge.setPercent(0);
+        mDosage.setPercent(0);
+
+        mOverall.setText("Overall Percentage - " + "0.00%");
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -321,6 +352,7 @@ public class MainActivity extends AppCompatActivity
 
         try {
             postdata.put("User_Name", username);
+            postdata.put("pass", 1997);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -329,7 +361,7 @@ public class MainActivity extends AppCompatActivity
                 postdata.toString());
 
         final Request request = new Request.Builder()
-                .url("https://api.illiteracy22.hasura-app.io/Auth/logout")
+                .url("https://api-illiteracy22.azurewebsites.net/Auth/logout")
                 .post(body)
                 .addHeader("Content-Type", "application/json")
                 .addHeader("cache-control", "no-cache")
@@ -351,21 +383,13 @@ public class MainActivity extends AppCompatActivity
                 if (response.isSuccessful()) {
                     try {
                         JSONObject json = new JSONObject(mMessage);
-                        //code = json.getInt("code");
-                        //Log.e("JSON", code + "");
+                        Log.e("JSON", json.toString());
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
             }
         });
-        /*if (code == 401) {
-            Toast.makeText(MainActivity.this, "Session Expires", Toast.LENGTH_SHORT).show();
-        } else if (code == 404) {
-            Toast.makeText(MainActivity.this, "User not found", Toast.LENGTH_SHORT).show();
-        } else if (code == 200) {
-
-        }*/
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -378,7 +402,8 @@ public class MainActivity extends AppCompatActivity
 
             startActivity(new Intent(this, MyProfile.class));
 
-        } else */if (id == R.id.nav_history) {
+        } else */
+        if (id == R.id.nav_history) {
 
             startActivity(new Intent(this, TrackRecord.class));
 
