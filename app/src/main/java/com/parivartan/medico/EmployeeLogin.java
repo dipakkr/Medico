@@ -55,11 +55,11 @@ public class EmployeeLogin extends AppCompatActivity {
 
         FirebaseVariables.mFirebaseAuth = FirebaseAuth.getInstance();
 
-        if(FirebaseVariables.mFirebaseAuth.getCurrentUser() !=null){
+       /* if(FirebaseVariables.mFirebaseAuth.getCurrentUser() !=null){
             //user is logged in
             finish();
             startActivity(new Intent(this,MainActivity.class));
-        }
+        }*/
 
         client = new OkHttpClient();
 
