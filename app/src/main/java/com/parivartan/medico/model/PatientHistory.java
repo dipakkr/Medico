@@ -20,6 +20,10 @@ public class PatientHistory {
     List<String> geneticDisesase;
 
 
+    public PatientHistory(){
+
+    }
+
     public PatientHistory(String username, List<String> allergens, List<String> resistance,
                           boolean pregnancy, boolean diabetes, boolean highbloodPressure, boolean highCholestrol, List<String> others, List<String> geneticDisesase) {
         this.username = username;

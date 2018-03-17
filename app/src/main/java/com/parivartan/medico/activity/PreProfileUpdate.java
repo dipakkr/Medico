@@ -3,9 +3,15 @@ package com.parivartan.medico.activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.app.LoaderManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.Loader;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
@@ -25,16 +31,30 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 import com.parivartan.medico.MainActivity;
 import com.parivartan.medico.R;
+import com.parivartan.medico.model.PatientDetail;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.List;
 
 import okhttp3.Callback;
 import okhttp3.MediaType;
@@ -43,19 +63,23 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import static com.parivartan.medico.activity.TrackRecord.LOG_TAG;
+
 /**
  * Created by root on 3/7/18.
  */
 
-public class PreProfileUpdate extends AppCompatActivity {
+public class PreProfileUpdate extends AppCompatActivity implements LoaderManager.LoaderCallbacks<PatientDetail>{
 
     public static final MediaType MEDIA_TYPE =
             MediaType.parse("application/json");
-    EditText usernameEditText, emailEditText, nameEditText, weightEditText, genderEditText, heightEditText;
-    EditText phoneEditText, addressEditText, stateEditText, pinCodeEditText;
+    static EditText usernameEditText, emailEditText, nameEditText, weightEditText, genderEditText, heightEditText;
+    static EditText phoneEditText, addressEditText, stateEditText, pinCodeEditText;
     static EditText ageEditText, dobEditText;
     String mEmail, mUsername, mPatientName, mGender, mAge, mWeight, mHeight, mDOB, mPhone, mAddress, mState, mPinCode;
     private int code;
+    private static final int PatienDetailLoader_LOADER_ID = 1;
+    private String urlToSend;
     OkHttpClient client;
     JSONObject postdata;
 
@@ -87,6 +111,8 @@ public class PreProfileUpdate extends AppCompatActivity {
         Log.e("EMAIL", mEmail);
         usernameEditText.setText(mUsername);
         emailEditText.setText(mEmail);
+
+        updateProfileUi();
 
         dobEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -134,6 +160,67 @@ public class PreProfileUpdate extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void updateProfileUi(){
+        FirebaseVariables.mDatabaseReference.child(FirebaseVariables.user.getUid()).child("profile").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if ((boolean) dataSnapshot.getValue()) {
+                    Toast.makeText(PreProfileUpdate.this, "Fetching your previously filled data", Toast.LENGTH_SHORT).show();
+                    // Get a reference to the ConnectivityManager to check state of network connectivity
+                    ConnectivityManager connMgr = (ConnectivityManager)
+                            getSystemService(Context.CONNECTIVITY_SERVICE);
+
+                    // Get details on the currently active default data network
+                    NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+
+                    // If there is a network connection, fetch data
+                    if (networkInfo != null && networkInfo.isConnected()) {
+                        // Get a reference to the LoaderManager, in order to interact with loaders.
+                        LoaderManager loaderManager = getLoaderManager();
+
+                        // Initialize the loader. Pass in the int ID constant defined above and pass in null for
+                        // the bundle. Pass in this activity for the LoaderCallbacks parameter (which is valid
+                        // because this activity implements the LoaderCallbacks interface).
+                        loaderManager.initLoader(PatienDetailLoader_LOADER_ID, null, PreProfileUpdate.this);
+                    }
+
+                    urlToSend="https://api.illiteracy22.hasura-app.io/User_Personal_Details/update_user_details";
+                } else {
+                    urlToSend = "https://api.illiteracy22.hasura-app.io/User_Personal_Details/upload_user_details";
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    @Override
+    public Loader<PatientDetail> onCreateLoader(int i, Bundle bundle) {
+        return new PatientDetailLoader(this, "https://api.illiteracy22.hasura-app.io/User_Personal_Details/download_user_details/"+mUsername+"/"+FirebaseVariables.user.getUid());
+    }
+
+    @Override
+    public void onLoadFinished(Loader<PatientDetail> loader, PatientDetail patientDetail) {
+        nameEditText.setText(patientDetail.getName());
+        genderEditText.setText(patientDetail.getGender());
+        dobEditText.setText(patientDetail.getDob());
+        ageEditText.setText(patientDetail.getAge());
+        heightEditText.setText(patientDetail.getHeight());
+        weightEditText.setText(patientDetail.getWeight());
+        phoneEditText.setText(patientDetail.getPhone());
+        addressEditText.setText(patientDetail.getAddress());
+        stateEditText.setText(patientDetail.getState());
+        pinCodeEditText.setText(patientDetail.getPincode());
+    }
+
+    @Override
+    public void onLoaderReset(Loader<PatientDetail> loader) {
+        // Loader reset, so we can clear out our existing data.
     }
 
     public static class DatePickerFragment extends DialogFragment
@@ -266,7 +353,7 @@ public class PreProfileUpdate extends AppCompatActivity {
                 postdata.toString());
 
         final Request request = new Request.Builder()
-                .url("https://api.illiteracy22.hasura-app.io/User_Personal_Details/upload_user_details")
+                .url(urlToSend)
                 .post(body)
                 .addHeader("Content-Type", "application/json")
                 .addHeader("cache-control", "no-cache")
@@ -296,14 +383,15 @@ public class PreProfileUpdate extends AppCompatActivity {
                 }
             }
         });
-        if(code==401){
+        FirebaseVariables.mDatabaseReference.child(FirebaseVariables.user.getUid()).child("profile").setValue(true);
+        Toast.makeText(PreProfileUpdate.this, "Profile Details Uploaded", Toast.LENGTH_SHORT).show();
+        /*if(code==401){
             Toast.makeText(PreProfileUpdate.this, "Session Expires", Toast.LENGTH_SHORT).show();
         } else if (code == 404) {
             Toast.makeText(PreProfileUpdate.this, "User not found", Toast.LENGTH_SHORT).show();
         }else if(code==200){
-            FirebaseVariables.mDatabaseReference.child(FirebaseVariables.user.getUid()).child("profile").setValue(true);
-            Toast.makeText(PreProfileUpdate.this, "Profile Details Uploaded", Toast.LENGTH_SHORT).show();
-        }
+
+        }*/
     }
 
     private void showUnsavedChangesDialog(

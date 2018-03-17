@@ -29,9 +29,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -42,9 +39,8 @@ import com.parivartan.medico.activity.PreProfileUpdate;
 import com.parivartan.medico.activity.PresentQR;
 import com.parivartan.medico.activity.TrackRecord;
 import com.parivartan.medico.adapter.MedicineAdapter;
-import com.parivartan.medico.model.Medicine;
-import com.parivartan.medico.model.PatientDetail;
-import com.parivartan.medico.model.UserFills;
+
+import com.timqi.sectorprogressview.ColorfulRingProgressView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -85,12 +81,14 @@ public class MainActivity extends AppCompatActivity
     JSONObject postdata;
     Button bt_analyse;
     //Percentage TextViews
-    TextView mAllergy, mPreg, mAge, mDisease, mDosage, mResistance, mOverall;
+    //TextView mAllergy, mPreg, mAge, mDisease, mDosage, mResistance, mOverall;
     String allergy, disease, pregnancy, resistance, age, dosage, overall;
     private int code;
     private int count = 2;
     private String TAG = "MainActivity.class";
     MedicineAdapter medicineAdapter;
+    ColorfulRingProgressView mAllergy, mPreg, mAge, mDisease, mDosage, mResistance;
+    TextView mOverall;
 
 
     @Override
@@ -147,14 +145,16 @@ public class MainActivity extends AppCompatActivity
         et_medicine_dosage = (EditText) findViewById(R.id.et_dosage);
         bt_analyse = (Button) findViewById(R.id.bt_analyse);
 
-        //Text view ids
-        mDosage = (TextView) findViewById(R.id.dosage_percentage);
-        mAge = (TextView) findViewById(R.id.age_percentage);
-        mPreg = (TextView) findViewById(R.id.pregnancy_percentage);
-        mResistance = (TextView) findViewById(R.id.resistance_percentage);
-        mAllergy = (TextView) findViewById(R.id.allergy_percentage);
-        mDisease = (TextView) findViewById(R.id.Disease_condition_percentage);
+        //CRV's ids
+        mAllergy = (ColorfulRingProgressView) findViewById(R.id.allergy_percentage);
+        mPreg = (ColorfulRingProgressView) findViewById(R.id.pregnancy_percentage);
+        mAge = (ColorfulRingProgressView) findViewById(R.id.age_percentage);
+        mDisease = (ColorfulRingProgressView) findViewById(R.id.Disease_condition_percentage);
+        mDosage = (ColorfulRingProgressView) findViewById(R.id.dosage_percentage);
+        mResistance = (ColorfulRingProgressView) findViewById(R.id.resistance_percentage);
         mOverall = (TextView) findViewById(R.id.overall_percentage);
+
+
 
         postdata = new JSONObject();
 
@@ -217,8 +217,9 @@ public class MainActivity extends AppCompatActivity
                                 age = json.getString("age_percentage");
                                 dosage = json.getString("dosage_percentage");
                                 overall = json.getString("aggerage_percentage");
-
-                                Log.e("Values", code + allergy + disease + pregnancy + resistance + age + dosage + overall);
+                                Log.e("yash","==============================================================");
+                                Log.e("Values", code +"\n"+ allergy +"\n"+ disease +"\n"+ pregnancy +"\n"+ resistance +"\n"+ age +"\n"+ dosage +"\n"+ overall);
+                                Log.e("yash","==============================================================");
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
@@ -230,7 +231,6 @@ public class MainActivity extends AppCompatActivity
                     Toast.makeText(MainActivity.this, "Session Expires", Toast.LENGTH_SHORT).show();
                 } else if (code == 404) {
                     Toast.makeText(MainActivity.this, "Medicine not found in our database", Toast.LENGTH_SHORT).show();
-                    updateUi();
                 } else if (code == 200) {
                     updateUi();
                 }
@@ -280,12 +280,13 @@ public class MainActivity extends AppCompatActivity
 
     private void updateUi() {
 
-        mAllergy.setText(allergy);
-        mDisease.setText(disease);
-        mPreg.setText(pregnancy);
-        mResistance.setText(resistance);
-        mAge.setText(age);
-        mDosage.setText(dosage);
+        mAllergy.setPercent(Float.valueOf(allergy));
+        mDisease.setPercent(Float.valueOf(disease));
+        mPreg.setPercent(Float.valueOf(pregnancy));
+        mResistance.setPercent(Float.valueOf(resistance));
+        mAge.setPercent(Float.valueOf(age));
+        mDosage.setPercent(Float.valueOf(dosage));
+
         mOverall.setText("Overall Percentage - " + overall);
     }
 
@@ -363,8 +364,7 @@ public class MainActivity extends AppCompatActivity
         } else if (code == 404) {
             Toast.makeText(MainActivity.this, "User not found", Toast.LENGTH_SHORT).show();
         } else if (code == 200) {
-            FirebaseVariables.mDatabaseReference.child(FirebaseVariables.user.getUid()).child("profile").setValue(true);
-            Toast.makeText(MainActivity.this, "Profile Details Uploaded", Toast.LENGTH_SHORT).show();
+
         }*/
     }
 
@@ -374,11 +374,11 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_my_profile) {
+        /*if (id == R.id.nav_my_profile) {
 
             startActivity(new Intent(this, MyProfile.class));
 
-        } else if (id == R.id.nav_history) {
+        } else */if (id == R.id.nav_history) {
 
             startActivity(new Intent(this, TrackRecord.class));
 

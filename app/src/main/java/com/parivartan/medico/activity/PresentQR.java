@@ -15,7 +15,7 @@ public class PresentQR extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_qrcode);
+        setContentView(R.layout.new_content_main);
 
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);

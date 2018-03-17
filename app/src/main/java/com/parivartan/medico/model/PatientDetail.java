@@ -19,6 +19,10 @@ public class PatientDetail {
     String state;
     String pincode;
 
+    public PatientDetail(){
+        super();
+    }
+
     public PatientDetail(String username, String email, String name, String gender, String dob, String age, String height, String weight,
                          String phone, String address, String state, String pincode) {
         this.username = username;

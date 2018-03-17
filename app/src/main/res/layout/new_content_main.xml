@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".MainActivity">
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_margin="10dp"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:padding="5dp"
+            android:orientation="vertical"
+            android:background="#d6eac2"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Medicine Recommendation"
+                android:textStyle="bold"
+                android:padding="10dp"
+                android:textSize="15sp"
+                android:gravity="center"/>
+
+            <Spinner
+                android:layout_width="match_parent"
+                android:padding="5dp"
+                android:id="@+id/spinner_types"
+                android:layout_height="wrap_content">
+
+            </Spinner>
+
+            <EditText
+                android:layout_width="match_parent"
+                android:hint="Medicine Name"
+                android:layout_weight="2"
+                android:layout_margin="10dp"
+                android:gravity="center_horizontal"
+                android:id="@+id/et_medicine_name"
+                android:layout_height="wrap_content" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Dosage in mg"
+                android:gravity="center_horizontal"
+                android:id="@+id/et_dosage"
+                android:inputType="number" />
+
+
+            <Button
+                android:layout_width="wrap_content"
+                android:text="Analyse"
+                android:id="@+id/bt_analyse"
+                android:layout_gravity="center_horizontal"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+    </android.support.v7.widget.CardView>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:background="#e1e1e1"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Overall Percentage - 0 %"
+        android:id="@+id/overall_percentage"
+        android:textStyle="bold"
+        android:textColor="#f00"
+        android:textSize="15sp"
+        android:layout_marginTop="15dp"
+        android:gravity="center_horizontal"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:background="#e1e1e1"/>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/linearLayout3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="42dp"
+                android:orientation="vertical"
+                android:padding="10dp">
+
+                <com.timqi.sectorprogressview.ColorfulRingProgressView
+                    android:id="@+id/allergy_percentage"
+                    android:layout_width="55dp"
+                    android:layout_height="55dp"
+                    app:bgColor="#e1e1e1"
+                    android:layout_gravity="center_horizontal"
+                    app:fgColorEnd="#ff4800"
+                    app:fgColorStart="#ffe400"
+                    app:percent="75"
+                    app:startAngle="0"
+                    app:strokeWidth="5dp"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="allergy_percentage"
+                    android:textColor="#fb00ff"
+                    android:textStyle="italic" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/linearLayout4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginEnd="23dp"
+                android:orientation="vertical"
+                android:padding="10dp">
+
+                <com.timqi.sectorprogressview.ColorfulRingProgressView
+                    android:id="@+id/dosage_percentage"
+                    android:layout_width="55dp"
+                    android:layout_height="55dp"
+                    android:layout_gravity="center_horizontal"
+                    app:bgColor="#e1e1e1"
+                    app:fgColorEnd="#ff4800"
+                    app:fgColorStart="#ffe400"
+                    app:percent="75"
+                    app:startAngle="0"
+                    app:strokeWidth="5dp"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="dosage_percentage"
+                    android:textColor="#fb00ff"
+                    android:textStyle="italic" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/linearLayout6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@+id/linearLayout4"
+                android:layout_below="@+id/linearLayout4"
+                android:layout_marginTop="15dp"
+                android:orientation="vertical"
+                android:padding="10dp">
+
+                <com.timqi.sectorprogressview.ColorfulRingProgressView
+                    android:layout_gravity="center_horizontal"
+                    android:id="@+id/resistance_percentage"
+                    android:layout_width="55dp"
+                    android:layout_height="55dp"
+                    app:bgColor="#e1e1e1"
+                    app:fgColorEnd="#ff4800"
+                    app:fgColorStart="#ffe400"
+                    app:percent="75"
+                    app:startAngle="0"
+                    app:strokeWidth="5dp"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="resistance_percentage"
+                    android:textColor="#fb00ff"
+                    android:textStyle="italic" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/linearLayout7"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignEnd="@+id/linearLayout3"
+                android:layout_alignTop="@+id/linearLayout6"
+                android:layout_marginEnd="10dp"
+                android:orientation="vertical"
+                android:padding="10dp">
+
+                <com.timqi.sectorprogressview.ColorfulRingProgressView
+                    android:id="@+id/age_percentage"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_width="55dp"
+                    android:layout_height="55dp"
+                    app:bgColor="#e1e1e1"
+                    app:fgColorEnd="#ff4800"
+                    app:fgColorStart="#ffe400"
+                    app:percent="75"
+                    app:startAngle="0"
+                    app:strokeWidth="5dp"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="age_percentage"
+                    android:textColor="#fb00ff"
+                    android:textStyle="italic" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/linearLayout7"
+                android:layout_marginStart="29dp"
+                android:orientation="vertical"
+                android:padding="10dp">
+
+                <com.timqi.sectorprogressview.ColorfulRingProgressView
+                    android:layout_gravity="center_horizontal"
+                    android:id="@+id/pregnancy_percentage"
+                    android:layout_width="55dp"
+                    android:layout_height="55dp"
+                    app:bgColor="#e1e1e1"
+                    app:fgColorEnd="#ff4800"
+                    app:fgColorStart="#ffe400"
+                    app:percent="75"
+                    app:startAngle="0"
+                    app:strokeWidth="5dp"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="pregnancy_percentage"
+                    android:textColor="#fb00ff"
+                    android:textStyle="italic" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignEnd="@+id/linearLayout4"
+                android:layout_below="@+id/linearLayout6"
+                android:orientation="vertical"
+                android:padding="10dp">
+
+                <com.timqi.sectorprogressview.ColorfulRingProgressView
+                    android:id="@+id/Disease_condition_percentage"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_width="55dp"
+                    android:layout_height="55dp"
+                    app:bgColor="#e1e1e1"
+                    app:fgColorEnd="#ff4800"
+                    app:fgColorStart="#ffe400"
+                    app:percent="75"
+                    app:startAngle="0"
+                    app:strokeWidth="5dp"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Disease Condition"
+                    android:textColor="#fb00ff"
+                    android:textStyle="italic" />
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+    </ScrollView>
+
+</LinearLayout>

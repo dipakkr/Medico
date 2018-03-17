@@ -124,6 +124,8 @@
                 android:textColor="#fb00ff"
                 android:textStyle="italic" />
 
+
+
         </LinearLayout>
 
         <LinearLayout
@@ -252,7 +254,6 @@
                 android:textStyle="italic" />
 
         </LinearLayout>
-
 
     </RelativeLayout>
 

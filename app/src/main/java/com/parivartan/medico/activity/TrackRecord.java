@@ -1,9 +1,14 @@
 package com.parivartan.medico.activity;
 
 import android.app.AlertDialog;
+import android.app.LoaderManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.Loader;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -22,10 +27,14 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.parivartan.medico.EmployeeRegistration;
 import com.parivartan.medico.MainActivity;
 import com.parivartan.medico.R;
+import com.parivartan.medico.model.PatientDetail;
 import com.parivartan.medico.model.PatientHistory;
 
 import org.json.JSONException;
@@ -65,7 +74,7 @@ import okhttp3.Response;
  * Created by root on 3/7/18.
  */
 
-public class TrackRecord extends AppCompatActivity {
+public class TrackRecord extends AppCompatActivity implements LoaderManager.LoaderCallbacks<PatientHistory> {
 
     public static final String LOG_TAG = TrackRecord.class.getName();
     public static final MediaType MEDIA_TYPE =
@@ -91,6 +100,8 @@ public class TrackRecord extends AppCompatActivity {
     private EditText mGeneticDiseaseEditText;
     private String json;
     int code;
+    private static final int PatientHistoryLoader_LOADER_ID = 1;
+    private String urlToSend;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -112,17 +123,56 @@ public class TrackRecord extends AppCompatActivity {
         mGeneticDiseaseEditText = (EditText) findViewById(R.id.genetic_edit_text);
 
         username = MainActivity.username;
+
+        updateHistoryUi();
+    }
+
+    private void updateHistoryUi(){
+        FirebaseVariables.mDatabaseReference.child(FirebaseVariables.user.getUid()).child("history").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if ((boolean) dataSnapshot.getValue()) {
+                    Toast.makeText(TrackRecord.this, "Fetching your previously filled data", Toast.LENGTH_SHORT).show();
+                    // Get a reference to the ConnectivityManager to check state of network connectivity
+                    ConnectivityManager connMgr = (ConnectivityManager)
+                            getSystemService(Context.CONNECTIVITY_SERVICE);
+
+                    // Get details on the currently active default data network
+                    NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+
+                    // If there is a network connection, fetch data
+                    if (networkInfo != null && networkInfo.isConnected()) {
+                        // Get a reference to the LoaderManager, in order to interact with loaders.
+                        LoaderManager loaderManager = getLoaderManager();
+
+                        // Initialize the loader. Pass in the int ID constant defined above and pass in null for
+                        // the bundle. Pass in this activity for the LoaderCallbacks parameter (which is valid
+                        // because this activity implements the LoaderCallbacks interface).
+                        loaderManager.initLoader(PatientHistoryLoader_LOADER_ID, null, TrackRecord.this);
+                    }
+
+                    urlToSend="https://api.illiteracy22.hasura-app.io/User_History_Upload/update_user_history";
+                } else {
+                    urlToSend = "https://api.illiteracy22.hasura-app.io/User_History_Upload/upload_user_history";
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private void extractUserInputsFromUI() {
-        allergens = Arrays.asList(mAllergens.getText().toString().trim().split(","));
-        resistance = Arrays.asList(mResistance.getText().toString().trim().split(","));
+        allergens = Arrays.asList(mAllergens.getText().toString().trim().replaceAll("\\s*,\\s*", ",").split(","));
+        resistance = Arrays.asList(mResistance.getText().toString().trim().replaceAll("\\s*,\\s*", ",").split(","));
         pregnancy = mPregnancy.isChecked();
         diabetes = mDiabetes.isChecked();
         highbloodPressure = mHighBloodPressure.isChecked();
         highCholestrol = mHighCholestrol.isChecked();
-        others = Arrays.asList(mOther.getText().toString().trim().split(","));
-        geneticDisesase = Arrays.asList(mGeneticDiseaseEditText.getText().toString().trim().split(","));
+        others = Arrays.asList(mOther.getText().toString().trim().replaceAll("\\s*,\\s*", ",").split(","));
+        geneticDisesase = Arrays.asList(mGeneticDiseaseEditText.getText().toString().trim().replaceAll("\\s*,\\s*", ",").split(","));
     }
 
     private void saveUserDetails() {
@@ -137,7 +187,7 @@ public class TrackRecord extends AppCompatActivity {
             postdata.put("Pregnancy", pregnancy);
             postdata.put("diabetes", diabetes);
             postdata.put("highBloodPressure", highbloodPressure);
-            postdata.put("highCholesterol", highbloodPressure);
+            postdata.put("highCholesterol", highCholestrol);
             postdata.put("other", others);
             postdata.put("geneticDisease", geneticDisesase);
         } catch (JSONException e) {
@@ -148,7 +198,7 @@ public class TrackRecord extends AppCompatActivity {
                 postdata.toString());
 
         final Request request = new Request.Builder()
-                .url("https://api.illiteracy22.hasura-app.io/User_History_Upload/upload_user_history")
+                .url(urlToSend)
                 .post(body)
                 .addHeader("Content-Type", "application/json")
                 .addHeader("cache-control", "no-cache")
@@ -178,14 +228,37 @@ public class TrackRecord extends AppCompatActivity {
                 }
             }
         });
-        if(code==401){
+        FirebaseVariables.mDatabaseReference.child(FirebaseVariables.user.getUid()).child("history").setValue(true);
+        Toast.makeText(TrackRecord.this, "Medical History Uploaded", Toast.LENGTH_SHORT).show();
+        /*if(code==401){
             Toast.makeText(TrackRecord.this, "Session Expires", Toast.LENGTH_SHORT).show();
         } else if (code == 404) {
             Toast.makeText(TrackRecord.this, "User not found", Toast.LENGTH_SHORT).show();
         }else if(code==200){
-            FirebaseVariables.mDatabaseReference.child(FirebaseVariables.user.getUid()).child("history").setValue(true);
-            Toast.makeText(TrackRecord.this, "Medical History Uploaded", Toast.LENGTH_SHORT).show();
-        }
+
+        }*/
+    }
+
+    @Override
+    public Loader<PatientHistory> onCreateLoader(int i, Bundle bundle) {
+        return new PatientHistoryLoader(this, "https://api.illiteracy22.hasura-app.io/User_History_Upload/download_user_history/"+username+"/"+FirebaseVariables.user.getUid());
+    }
+
+    @Override
+    public void onLoadFinished(Loader<PatientHistory> loader, PatientHistory patientHistory) {
+        mAllergens.setText(patientHistory.getAllergens().toString().replaceAll("[\\[\\]]", ""));
+        mResistance.setText(patientHistory.getResistance().toString().replaceAll("[\\[\\]]", ""));
+        mPregnancy.setChecked(patientHistory.isPregnancy());
+        mDiabetes.setChecked(patientHistory.isDiabetes());
+        mHighBloodPressure.setChecked(patientHistory.isHighbloodPressure());
+        mHighCholestrol.setChecked(patientHistory.isHighCholestrol());
+        mOther.setText(patientHistory.getOthers().toString().replaceAll("[\\[\\]]", ""));
+        mGeneticDiseaseEditText.setText(patientHistory.getGeneticDisesase().toString().replaceAll("[\\[\\]]", ""));
+    }
+
+    @Override
+    public void onLoaderReset(Loader<PatientHistory> loader) {
+        // Loader reset, so we can clear out our existing data.
     }
 
     private void showUnsavedChangesDialog(
