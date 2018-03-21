@@ -6,17 +6,11 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
-import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,45 +18,21 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
-import com.google.gson.Gson;
-import com.parivartan.medico.EmployeeRegistration;
+
 import com.parivartan.medico.MainActivity;
 import com.parivartan.medico.R;
-import com.parivartan.medico.model.PatientDetail;
 import com.parivartan.medico.model.PatientHistory;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
-import java.net.URL;
-import java.net.URLEncoder;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import javax.net.ssl.HttpsURLConnection;
-
-import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -98,7 +68,6 @@ public class TrackRecord extends AppCompatActivity implements LoaderManager.Load
     private CheckBox mHighCholestrol;
     private EditText mOther;
     private EditText mGeneticDiseaseEditText;
-    private String json;
     int code;
     private static final int PatientHistoryLoader_LOADER_ID = 1;
     private String urlToSend;
@@ -152,8 +121,10 @@ public class TrackRecord extends AppCompatActivity implements LoaderManager.Load
                     }
 
                     urlToSend = "https://api-illiteracy22.azurewebsites.net/User_History_Upload/update_user_history";
+                    //urlToSend = "https://api.illiteracy22.hasura-app.io/User_History_Upload/update_user_history";
                 } else {
                     urlToSend = "https://api-illiteracy22.azurewebsites.net/User_History_Upload/upload_user_history";
+                    //urlToSend = "https://api.illiteracy22.hasura-app.io/User_History_Upload/upload_user_history";
                 }
             }
 
@@ -256,6 +227,7 @@ public class TrackRecord extends AppCompatActivity implements LoaderManager.Load
     @Override
     public Loader<PatientHistory> onCreateLoader(int i, Bundle bundle) {
         return new PatientHistoryLoader(this, "https://api-illiteracy22.azurewebsites.net/User_History_Upload/download_user_history/" + username + "/" + FirebaseVariables.user.getUid());
+        //return new PatientHistoryLoader(this, "https://api.illiteracy22.hasura-app.io/User_History_Upload/download_user_history/" + username + "/" + FirebaseVariables.user.getUid());
     }
 
     @Override

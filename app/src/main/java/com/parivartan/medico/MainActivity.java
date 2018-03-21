@@ -1,14 +1,9 @@
 package com.parivartan.medico;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
-import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.telecom.Call;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -24,7 +19,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,7 +28,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.parivartan.medico.activity.FirebaseVariables;
-import com.parivartan.medico.activity.MyProfile;
 import com.parivartan.medico.activity.PreProfileUpdate;
 import com.parivartan.medico.activity.PresentQR;
 import com.parivartan.medico.activity.TrackRecord;
@@ -45,16 +38,7 @@ import com.timqi.sectorprogressview.ColorfulRingProgressView;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.net.ssl.HttpsURLConnection;
 
 import okhttp3.Callback;
 import okhttp3.MediaType;
@@ -76,7 +60,6 @@ public class MainActivity extends AppCompatActivity
     String med_name;
     String med_dosage;
     String med_type;
-    String type;
     OkHttpClient client;
     JSONObject postdata;
     Button bt_analyse;
@@ -86,10 +69,8 @@ public class MainActivity extends AppCompatActivity
     private int code;
     private int count = 2;
     private String TAG = "MainActivity.class";
-    MedicineAdapter medicineAdapter;
     ColorfulRingProgressView mAllergy, mPreg, mAge, mDisease, mDosage, mResistance;
     TextView mOverall;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,17 +82,9 @@ public class MainActivity extends AppCompatActivity
 
         client = new OkHttpClient();
 
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        email = preferences.getString("email", "");
-        username = preferences.getString("username", "");
-
-
-//        Intent intent = getIntent();
-//        String email = intent.getStringExtra("email");
-//        String username = intent.getStringExtra("username");
-
-        Toast.makeText(this, email, Toast.LENGTH_SHORT).show();
-        Toast.makeText(this, username, Toast.LENGTH_SHORT).show();
+        Intent intent = getIntent();
+        email = intent.getStringExtra("email");
+        username = intent.getStringExtra("username");
 
         if (FirebaseVariables.user == null) {
             startActivity(new Intent(this, EmployeeRegistration.class));
@@ -188,6 +161,7 @@ public class MainActivity extends AppCompatActivity
                         postdata.toString());
                 final Request request = new Request.Builder()
                         .url("https://api-illiteracy22.azurewebsites.net/ML_Analysis/Evaluation")
+                        //.url("https://api.illiteracy22.hasura-app.io/ML_Analysis/Evaluation")
                         .post(body)
                         .addHeader("Content-Type", "application/json")
                         .addHeader("cache-control", "no-cache")
@@ -362,6 +336,7 @@ public class MainActivity extends AppCompatActivity
 
         final Request request = new Request.Builder()
                 .url("https://api-illiteracy22.azurewebsites.net/Auth/logout")
+                //.url("https://api.illiteracy22.hasura-app.io/Auth/logout")
                 .post(body)
                 .addHeader("Content-Type", "application/json")
                 .addHeader("cache-control", "no-cache")

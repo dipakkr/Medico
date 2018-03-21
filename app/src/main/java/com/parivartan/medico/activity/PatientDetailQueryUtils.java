@@ -1,11 +1,8 @@
 package com.parivartan.medico.activity;
 
-import android.app.Activity;
+import com.parivartan.medico.model.PatientDetail;
 import android.text.TextUtils;
 import android.util.Log;
-import android.widget.Toast;
-
-import com.parivartan.medico.model.PatientDetail;
 
 import org.json.JSONException;
 import org.json.JSONObject;
