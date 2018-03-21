@@ -44,6 +44,7 @@ import com.timqi.sectorprogressview.ColorfulRingProgressView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -80,12 +81,15 @@ public class MainActivity extends AppCompatActivity
     OkHttpClient client;
     JSONObject postdata;
     Button bt_analyse;
+
     //Percentage TextViews
-    //TextView mAllergy, mPreg, mAge, mDisease, mDosage, mResistance, mOverall;
+    TextView Allergy, Preg, Age, Disease, Dosage, Resistance, Overall;
     String allergy, disease, pregnancy, resistance, age, dosage, overall;
+
     private int code;
     private int count = 2;
     private String TAG = "MainActivity.class";
+
     MedicineAdapter medicineAdapter;
     ColorfulRingProgressView mAllergy, mPreg, mAge, mDisease, mDosage, mResistance;
     TextView mOverall;
@@ -153,6 +157,14 @@ public class MainActivity extends AppCompatActivity
         mDosage = (ColorfulRingProgressView) findViewById(R.id.dosage_percentage);
         mResistance = (ColorfulRingProgressView) findViewById(R.id.resistance_percentage);
         mOverall = (TextView) findViewById(R.id.overall_percentage);
+
+        //Text view id
+        Allergy = (TextView)findViewById(R.id.txt_allergy);
+        Age = (TextView)findViewById(R.id.txt_age);
+        Disease = (TextView)findViewById(R.id.txt_disease);
+        Dosage = (TextView)findViewById(R.id.txt_dosage);
+        Preg = (TextView)findViewById(R.id.txt_preg);
+        Resistance = (TextView)findViewById(R.id.txt_resistance);
 
 
         postdata = new JSONObject();
@@ -307,6 +319,14 @@ public class MainActivity extends AppCompatActivity
         mDosage.setPercent(Float.valueOf(dosage));
 
         mOverall.setText("Overall Percentage - " + overall);
+
+        Allergy.setText("Allergy - " + allergy);
+        Disease.setText("Disease - "+disease);
+        Preg.setText("Pregnancy - "+pregnancy);
+        Resistance.setText("Resistance -"+resistance);
+        Age.setText("Age -"+age);
+        Dosage.setText("Dosage -"+dosage);
+
     }
 
     private void updateUiZero() {
