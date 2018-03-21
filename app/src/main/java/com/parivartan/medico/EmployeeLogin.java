@@ -63,9 +63,9 @@ public class EmployeeLogin extends AppCompatActivity {
 
         client = new OkHttpClient();
 
-        mEtemail = (EditText)findViewById(R.id.login_email);
-        mEtPass = (EditText)findViewById(R.id.login_pass);
-        mLogin = (Button)findViewById(R.id.bt_login);
+        mEtemail = (EditText) findViewById(R.id.login_email);
+        mEtPass = (EditText) findViewById(R.id.login_pass);
+        mLogin = (Button) findViewById(R.id.bt_login);
         mBack = (Button) findViewById(R.id.back);
 
         progressDialog = new ProgressDialog(this);
@@ -82,32 +82,37 @@ public class EmployeeLogin extends AppCompatActivity {
             }
         });
     }
-    private void loginUser(){
+
+    private void loginUser() {
         final String email = mEtemail.getText().toString();
         String password = mEtPass.getText().toString();
 
-        if(TextUtils.isEmpty(email)){
-            Toast.makeText(this,"Enter Email",Toast.LENGTH_SHORT).show();
+        if (TextUtils.isEmpty(email)) {
+            Toast.makeText(this, "Enter Email", Toast.LENGTH_SHORT).show();
             return;
         }
         if (TextUtils.isEmpty(password)) {
-            Toast.makeText(this,"Enter Password",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Enter Password", Toast.LENGTH_SHORT).show();
             return;
         }
 
         progressDialog.setMessage("Logging in Please Wait");
         progressDialog.show();
 
-        FirebaseVariables.mFirebaseAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+        FirebaseVariables.mFirebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-                if(task.isSuccessful()){
+                if (task.isSuccessful()) {
                     FirebaseVariables.user = FirebaseVariables.mFirebaseAuth.getCurrentUser();
                     updateSession(email);
                     finish();
-                    Toast.makeText(EmployeeLogin.this,"Login Successful",Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(getApplicationContext(),MainActivity.class));
-                }else{
+                    Toast.makeText(EmployeeLogin.this, "Login Successful", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                    intent.putExtra("email", email);
+                    final String userid = email.split("@")[0];
+                    intent.putExtra("username", userid);
+                    startActivity(intent);
+                } else {
                     Toast.makeText(EmployeeLogin.this, "Login Error", Toast.LENGTH_SHORT).show();
                 }
                 progressDialog.dismiss();
@@ -115,13 +120,13 @@ public class EmployeeLogin extends AppCompatActivity {
         });
     }
 
-    private void updateSession(String email){
+    private void updateSession(String email) {
         postdata = new JSONObject();
 
         try {
             postdata.put("User_Name", email.split("@")[0]);
-            postdata.put("Session_token",FirebaseVariables.user.getUid());
-            postdata.put("pass",1997);
+            postdata.put("Session_token", FirebaseVariables.user.getUid());
+            postdata.put("pass", 1997);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -131,6 +136,7 @@ public class EmployeeLogin extends AppCompatActivity {
 
         final Request request = new Request.Builder()
                 .url("https://api-illiteracy22.azurewebsites.net/Auth/update_session_ID")
+                //.url("https://api.illiteracy22.hasura-app.io/Auth/update_session_ID")
                 .post(body)
                 .addHeader("Content-Type", "application/json")
                 .addHeader("cache-control", "no-cache")

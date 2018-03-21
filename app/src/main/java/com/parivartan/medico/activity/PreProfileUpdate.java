@@ -11,24 +11,18 @@ import android.content.Loader;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.Uri;
+
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
@@ -38,23 +32,12 @@ import com.parivartan.medico.MainActivity;
 import com.parivartan.medico.R;
 import com.parivartan.medico.model.PatientDetail;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
-import java.util.List;
 
 import okhttp3.Callback;
 import okhttp3.MediaType;
@@ -62,8 +45,6 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-
-import static com.parivartan.medico.activity.TrackRecord.LOG_TAG;
 
 /**
  * Created by root on 3/7/18.
@@ -103,12 +84,8 @@ public class PreProfileUpdate extends AppCompatActivity implements LoaderManager
         stateEditText = (EditText) findViewById(R.id.user_state);
         pinCodeEditText = (EditText) findViewById(R.id.user_pin_code);
 
-
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        mEmail = preferences.getString("email", "");
-        mUsername = preferences.getString("username", "");
-
-        Log.e("EMAIL", mEmail);
+        mEmail = MainActivity.email;
+        mUsername = MainActivity.username;
         usernameEditText.setText(mUsername);
         emailEditText.setText(mEmail);
 
@@ -186,9 +163,11 @@ public class PreProfileUpdate extends AppCompatActivity implements LoaderManager
                         loaderManager.initLoader(PatienDetailLoader_LOADER_ID, null, PreProfileUpdate.this);
                     }
 
-                    urlToSend = "https://api-illiteracy22.azurewebsites.net/User_Personal_Details/update_user_details";
+                    urlToSend = "q://api-illiteracy22.azurewebsites.net/User_Personal_Details/update_user_details";
+                    //urlToSend = "https://api.illiteracy22.hasura-app.io/User_Personal_Details/update_user_details";
                 } else {
                     urlToSend = "https://api-illiteracy22.azurewebsites.net/User_Personal_Details/upload_user_details";
+                    //urlToSend = "https://api.illiteracy22.hasura-app.io/User_Personal_Details/upload_user_details";
                 }
             }
 
@@ -202,6 +181,7 @@ public class PreProfileUpdate extends AppCompatActivity implements LoaderManager
     @Override
     public Loader<PatientDetail> onCreateLoader(int i, Bundle bundle) {
         return new PatientDetailLoader(this, "https://api-illiteracy22.azurewebsites.net/User_Personal_Details/download_user_details/" + mUsername + "/" + FirebaseVariables.user.getUid());
+        //return new PatientDetailLoader(this, "https://api.illiteracy22.hasura-app.io/User_Personal_Details/download_user_details/" + mUsername + "/" + FirebaseVariables.user.getUid());
     }
 
     @Override
