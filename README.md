@@ -12,12 +12,12 @@ The Idea behind the project is to to find whether a Medicine Composition is Suit
 
 # DEMO 
 
-![Image](./docs/s1.png)
+![Image](./docs/s1.png) ![Image](./docs/s2.png)
 
-![Image](./docs/s2.png)
 
-![Image](./docs/s3.png)
 
-![Image](./docs/s4.png)
+![Image](./docs/s3.png) ![Image](./docs/s4.png)
+
+
 
 ![Image](./docs/s5.png)
